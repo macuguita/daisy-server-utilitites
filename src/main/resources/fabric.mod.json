@@ -13,18 +13,7 @@
 	},
 	"license": "MIT",
 	"icon": "assets/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			{
-				"value": "com.macuguita.daisy.DaisyServerUtilities",
-				"adapter": "kotlin"
-			}
-		]
-	},
-	"mixins": [
-		"daisy-server-utilities.mixins.json"
-	],
+	"environment": "server",
 	"depends": {
 		"fabricloader": ">=0.18.4",
 		"minecraft": "~1.21.1",

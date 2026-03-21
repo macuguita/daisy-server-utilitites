@@ -11,6 +11,7 @@ version = project.version
 
 val minecraftVersion = rootProject.providers.gradleProperty("minecraft_version").get()
 val loaderVersion = rootProject.providers.gradleProperty("loader_version").get()
+
 repositories {
     mavenLocal()
     mavenCentral()

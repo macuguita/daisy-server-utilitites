@@ -13,7 +13,7 @@
 	},
 	"license": "MIT",
 	"icon": "assets/icon.png",
-	"environment": "*",
+	"environment": "server",
 	"entrypoints": {
 		"main": [
 			{
@@ -22,13 +22,18 @@
 			}
 		]
 	},
-	"mixins": [
-	],
 	"depends": {
 		"fabricloader": ">=0.18.4",
 		"minecraft": "~1.21.1",
 		"java": ">=21",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*"
+	},
+	"custom": {
+		"modmenu": {
+			"parent": {
+				"id": "daisy-server-utilities"
+			}
+		}
 	}
 }
