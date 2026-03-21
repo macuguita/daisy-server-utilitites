@@ -93,7 +93,8 @@ object ListHomesCommands : CommandRegistrator {
     }
 
     private fun getOfflineHomes(server: MinecraftServer, uuid: java.util.UUID): List<Home>? {
-        val playerDataStorageAccessor = (server as MinecraftServerAccessor).`daisy_home$getPlayerDataStorage`() as PlayerDataStorageAccessor
+        val playerDataStorageAccessor =
+            (server as MinecraftServerAccessor).`daisy_home$getPlayerDataStorage`() as PlayerDataStorageAccessor
         val playerDir = playerDataStorageAccessor.`daisy_home$getPlayerDir`()
         val file = File(playerDir, "$uuid.dat")
 

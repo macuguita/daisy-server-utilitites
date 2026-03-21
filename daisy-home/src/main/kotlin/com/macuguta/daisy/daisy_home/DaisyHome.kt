@@ -23,11 +23,7 @@
 package com.macuguta.daisy.daisy_home
 
 import com.macuguta.daisy.daisy_home.attachments.Homes
-import com.macuguta.daisy.daisy_home.commands.DelHomeCommand
-import com.macuguta.daisy.daisy_home.commands.HomeCommand
-import com.macuguta.daisy.daisy_home.commands.ListHomesCommands
-import com.macuguta.daisy.daisy_home.commands.SetHomeCommand
-import com.macuguta.daisy.daisy_home.commands.SetMaxHomesCommand
+import com.macuguta.daisy.daisy_home.commands.*
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
@@ -41,6 +37,7 @@ object DaisyHome : ModInitializer {
     private val MOD_ID = "daisy-home"
 
     override fun onInitialize() {
+        if (!HomeConfig.INSTANCE.isEnabled) return
         CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
             DelHomeCommand.register(dispatcher)
             HomeCommand.register(dispatcher)

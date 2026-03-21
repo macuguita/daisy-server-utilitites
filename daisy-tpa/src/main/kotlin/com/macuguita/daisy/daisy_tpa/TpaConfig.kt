@@ -20,21 +20,22 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguita.daisy.daisy_warp
+package com.macuguita.daisy.daisy_tpa
 
-import com.macuguita.daisy.daisy_warp.commands.*
-import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import com.macuguita.daisy.daisy_base.config.ModuleConfig
 
-object DaisyWarp : ModInitializer {
-    override fun onInitialize() {
-        if (!WarpConfig.INSTANCE.isEnabled) return
-        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
-            AddWarpCommand.register(dispatcher)
-            DelWarpCommand.register(dispatcher)
-            SpawnCommand.register(dispatcher)
-            WarpCommand.register(dispatcher)
-            WarpsCommand.register(dispatcher)
-        }
+class TpaConfig : ModuleConfig("daisy/tpa.properties") {
+    var requestExpiryMs: Int = 60_000
+        private set
+    var maxPendingRequests: Int = 3
+        private set
+
+    override fun configure() {
+        requestExpiryMs = int("requestExpiryMs", 60_000)
+        maxPendingRequests = int("maxPendingRequests", 3)
+    }
+
+    companion object {
+        val INSTANCE = TpaConfig().also { it.load() }
     }
 }

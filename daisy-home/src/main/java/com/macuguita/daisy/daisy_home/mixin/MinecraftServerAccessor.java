@@ -22,13 +22,14 @@
 
 package com.macuguita.daisy.daisy_home.mixin;
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.storage.PlayerDataStorage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.storage.PlayerDataStorage;
+
 @Mixin(MinecraftServer.class)
 public interface MinecraftServerAccessor {
-    @Accessor("playerDataStorage")
-    PlayerDataStorage daisy_home$getPlayerDataStorage();
+	@Accessor("playerDataStorage")
+	PlayerDataStorage daisy_home$getPlayerDataStorage();
 }

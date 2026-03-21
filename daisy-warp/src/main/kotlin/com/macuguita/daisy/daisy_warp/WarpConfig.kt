@@ -20,22 +20,16 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguita.daisy.daisy_tpa.config
+package com.macuguita.daisy.daisy_warp
 
 import com.macuguita.daisy.daisy_base.config.ModuleConfig
 
-class TpaConfig : ModuleConfig("daisy/tpa.properties") {
-    var requestExpiryMs: Int = 60_000
-        private set
-    var maxPendingRequests: Int = 3
-        private set
+class WarpConfig : ModuleConfig("daisy/warp.properties") {
 
     override fun configure() {
-        requestExpiryMs = int("requestExpiryMs", 60_000)
-        maxPendingRequests = int("maxPendingRequests", 3)
     }
 
     companion object {
-        val INSTANCE = TpaConfig().also { it.load() }
+        val INSTANCE = WarpConfig().also { it.load() }
     }
 }

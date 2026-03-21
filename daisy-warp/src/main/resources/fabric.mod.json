@@ -1,39 +1,39 @@
 {
-	"schemaVersion": 1,
-	"id": "daisy-warp",
-	"version": "${version}",
-	"name": "Daisy Warp",
-	"description": "Daisy Server utilities warp module",
-	"authors": [
-		"macuguita"
-	],
-	"contact": {
-		"homepage": "https://macuguita.com/",
-		"sources": "https://github.com/macuguita/daisy-server-utilitites"
-	},
-	"license": "MIT",
-	"icon": "assets/icon.png",
-	"environment": "server",
-	"entrypoints": {
-		"main": [
-			{
-				"value": "com.macuguita.daisy.daisy_warp.DaisyWarp",
-				"adapter": "kotlin"
-			}
-		]
-	},
-	"depends": {
-		"fabricloader": ">=0.18.4",
-		"minecraft": "~1.21.1",
-		"java": ">=21",
-		"fabric-api": "*",
-		"fabric-language-kotlin": "*"
-	},
-	"custom": {
-		"modmenu": {
-			"parent": {
-				"id": "daisy-server-utilities"
-			}
-		}
-	}
+  "schemaVersion": 1,
+  "id": "daisy-warp",
+  "version": "${version}",
+  "name": "Daisy Warp",
+  "description": "Daisy Server utilities warp module",
+  "authors": [
+    "macuguita"
+  ],
+  "contact": {
+    "homepage": "https://macuguita.com/",
+    "sources": "https://github.com/macuguita/daisy-server-utilitites"
+  },
+  "license": "MIT",
+  "icon": "assets/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      {
+        "value": "com.macuguita.daisy.daisy_warp.DaisyWarp",
+        "adapter": "kotlin"
+      }
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*",
+    "fabric-language-kotlin": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": {
+        "id": "daisy-server-utilities"
+      }
+    }
+  }
 }

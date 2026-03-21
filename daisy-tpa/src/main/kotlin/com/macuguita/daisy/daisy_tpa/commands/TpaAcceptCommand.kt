@@ -24,7 +24,7 @@ package com.macuguita.daisy.daisy_tpa.commands
 
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
-import com.macuguita.daisy.daisy_tpa.config.TpaConfig
+import com.macuguita.daisy.daisy_tpa.TpaConfig
 import com.macuguita.daisy.daisy_tpa.data.TpaManager
 import com.macuguita.daisy.daisy_tpa.data.TpaRequest
 import com.macuguita.daisy.daisy_tpa.data.TpaType

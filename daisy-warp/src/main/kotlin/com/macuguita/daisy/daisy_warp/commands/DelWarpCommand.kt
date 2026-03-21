@@ -65,6 +65,7 @@ object DelWarpCommand : CommandRegistrator {
                 )
                 CommandResult.SUCCESS.value
             }
+
             RemoveWarpResult.NOT_FOUND -> {
                 source.sendFailure(
                     Component.literal("Warp '$name' does not exist.")

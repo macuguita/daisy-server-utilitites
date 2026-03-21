@@ -62,6 +62,7 @@ object AddWarpCommand : CommandRegistrator {
                 )
                 CommandResult.SUCCESS.value
             }
+
             AddWarpResult.DUPLICATE_NAME -> {
                 source.sendFailure(
                     Component.literal("A warp named '$name' already exists.")

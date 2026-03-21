@@ -1,39 +1,39 @@
 {
-	"schemaVersion": 1,
-	"id": "daisy-tpa",
-	"version": "${version}",
-	"name": "Daisy Tpa",
-	"description": "Daisy Server utilities tpa module",
-	"authors": [
-		"macuguita"
-	],
-	"contact": {
-		"homepage": "https://macuguita.com/",
-		"sources": "https://github.com/macuguita/daisy-server-utilitites"
-	},
-	"license": "MIT",
-	"icon": "assets/icon.png",
-	"environment": "server",
-	"entrypoints": {
-		"main": [
-			{
-				"value": "com.macuguita.daisy.daisy_tpa.DaisyTpa",
-				"adapter": "kotlin"
-			}
-		]
-	},
-	"depends": {
-		"fabricloader": ">=0.18.4",
-		"minecraft": "~1.21.1",
-		"java": ">=21",
-		"fabric-api": "*",
-		"fabric-language-kotlin": "*"
-	},
-	"custom": {
-		"modmenu": {
-			"parent": {
-				"id": "daisy-server-utilities"
-			}
-		}
-	}
+  "schemaVersion": 1,
+  "id": "daisy-tpa",
+  "version": "${version}",
+  "name": "Daisy Tpa",
+  "description": "Daisy Server utilities tpa module",
+  "authors": [
+    "macuguita"
+  ],
+  "contact": {
+    "homepage": "https://macuguita.com/",
+    "sources": "https://github.com/macuguita/daisy-server-utilitites"
+  },
+  "license": "MIT",
+  "icon": "assets/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      {
+        "value": "com.macuguita.daisy.daisy_tpa.DaisyTpa",
+        "adapter": "kotlin"
+      }
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*",
+    "fabric-language-kotlin": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": {
+        "id": "daisy-server-utilities"
+      }
+    }
+  }
 }

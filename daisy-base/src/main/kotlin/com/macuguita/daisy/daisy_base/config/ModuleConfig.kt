@@ -26,8 +26,7 @@ import net.fabricmc.loader.api.FabricLoader
 import org.slf4j.LoggerFactory
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.Properties
-import java.util.UUID
+import java.util.*
 
 abstract class ModuleConfig(
     private val fileName: String
@@ -36,6 +35,9 @@ abstract class ModuleConfig(
     private val properties = Properties()
     private val path: Path = FabricLoader.getInstance().configDir.resolve(fileName)
 
+    var isEnabled: Boolean = true
+        private set
+
     fun load() {
         Files.createDirectories(path.parent)
 
@@ -43,12 +45,13 @@ abstract class ModuleConfig(
             Files.newBufferedReader(path).use { properties.load(it) }
         }
 
+        // Always loaded first so it appears at the top of the config file
+        isEnabled = boolean("enableModule", true)
         configure()
 
         Files.newBufferedWriter(path).use { properties.store(it, "Daisy Config - $fileName") }
     }
 
-    // Each subclass defines its own properties here
     protected abstract fun configure()
 
     protected fun string(key: String, default: String): String {
@@ -77,7 +80,9 @@ abstract class ModuleConfig(
             .map { it.trim() }
             .filter { it.isNotBlank() }
             .mapNotNull {
-                try { UUID.fromString(it) } catch (e: IllegalArgumentException) {
+                try {
+                    UUID.fromString(it)
+                } catch (e: IllegalArgumentException) {
                     logger.warn("Invalid UUID '$it' in $fileName")
                     null
                 }

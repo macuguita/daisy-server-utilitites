@@ -22,9 +22,9 @@
 
 package com.macuguita.daisy.daisy_warp.commands
 
-import com.macuguita.daisy.daisy_warp.data.Warp
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
+import com.macuguita.daisy.daisy_warp.data.Warp
 import com.macuguita.daisy.daisy_warp.saveddata.DaisyWarps
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.ChatFormatting
