@@ -1,0 +1,28 @@
+{
+	"schemaVersion": 1,
+	"id": "daisy-base",
+	"version": "${version}",
+	"name": "Daisy Base",
+	"description": "Daisy Server utilities base module",
+	"authors": [
+		"macuguita"
+	],
+	"contact": {
+		"homepage": "https://macuguita.com/",
+		"sources": "https://github.com/macuguita/daisy-server-utilitites"
+	},
+	"license": "MIT",
+	"icon": "assets/icon.png",
+	"environment": "*",
+	"entrypoints": {
+	},
+	"mixins": [
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	}
+}

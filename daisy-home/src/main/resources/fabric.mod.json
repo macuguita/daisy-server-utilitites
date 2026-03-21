@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "daisy-home",
+	"version": "${version}",
+	"name": "Daisy Home",
+	"description": "Daisy Server utilities home module",
+	"authors": [
+		"macuguita"
+	],
+	"contact": {
+		"homepage": "https://macuguita.com/",
+		"sources": "https://github.com/macuguita/daisy-server-utilitites"
+	},
+	"license": "MIT",
+	"icon": "assets/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			{
+				"value": "com.macuguta.daisy.daisy_home.DaisyHome",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	}
+}

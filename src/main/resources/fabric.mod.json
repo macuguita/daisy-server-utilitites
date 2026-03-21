@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "daisy-server-utilities",
+	"version": "${version}",
+	"name": "Daisy Server Utilities",
+	"description": "Server utilities",
+	"authors": [
+		"macuguita"
+	],
+	"contact": {
+		"homepage": "https://macuguita.com/",
+		"sources": "https://github.com/macuguita/daisy-server-utilitites"
+	},
+	"license": "MIT",
+	"icon": "assets/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			{
+				"value": "com.macuguita.daisy.DaisyServerUtilities",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+		"daisy-server-utilities.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	}
+}
