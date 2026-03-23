@@ -1,0 +1,15 @@
+{
+  "daisy.tooltip.teleport": "Haz clic para teletransportarte",
+  "daisy.command.delhome.success": "El hogar '%s' ha sido eliminado.",
+  "daisy.command.delhome.error.not_found": "El hogar '%s' no existe.",
+  "daisy.command.home.success": "Teletransportado al hogar '%s'.",
+  "daisy.command.home.error.not_found": "El hogar '%s' no existe.",
+  "daisy.command.home.error.level_not_found": "No se pudo encontrar la dimensión '%s'.",
+  "daisy.command.homes.error.no_homes": "%s no tiene hogares establecidos.",
+  "daisy.command.homes.feedback.1": "Hogares de %s:",
+  "daisy.command.sethome.success": "Hogar '%s' establecido en tu posición actual",
+  "daisy.command.sethome.error.at_capacity": "Has alcanzado el número máximo de hogares (%d).",
+  "daisy.command.sethome.error.duplicate_name": "Ya existe un hogar llamado '%s'.",
+  "daisy.command.setmaxhomes.feedback.target": "Máximo de hogares establecido a %d.",
+  "daisy.command.setmaxhomes.feedback.user": "Máximo de hogares de %s establecido a %d."
+}

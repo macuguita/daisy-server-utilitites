@@ -22,9 +22,7 @@
 
 package com.macuguita.daisy.daisy_warp.saveddata
 
-import com.macuguita.daisy.daisy_warp.data.AddWarpResult
-import com.macuguita.daisy.daisy_warp.data.RemoveWarpResult
-import com.macuguita.daisy.daisy_warp.data.Warp
+import java.util.*
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
@@ -33,64 +31,66 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.server.MinecraftServer
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.saveddata.SavedData
-import java.util.*
+import com.macuguita.daisy.daisy_warp.data.AddWarpResult
+import com.macuguita.daisy.daisy_warp.data.RemoveWarpResult
+import com.macuguita.daisy.daisy_warp.data.Warp
 
 class DaisyWarps private constructor(
-    private val warpsInternal: MutableList<Warp> = mutableListOf()
+	private val warpsInternal: MutableList<Warp> = mutableListOf(),
 ) : SavedData() {
 
-    constructor() : this(mutableListOf())
+	constructor() : this(mutableListOf())
 
-    fun all(): List<Warp> = Collections.unmodifiableList(ArrayList(warpsInternal))
+	fun all(): List<Warp> = Collections.unmodifiableList(ArrayList(warpsInternal))
 
-    fun find(name: String): Warp? = warpsInternal.find { it.name == name.lowercase() }
+	fun find(name: String): Warp? = warpsInternal.find { it.name == name.lowercase() }
 
-    fun add(name: String, pos: BlockPos, dimension: ResourceKey<Level>): AddWarpResult {
-        val n = name.lowercase()
-        if (warpsInternal.any { it.name == n }) return AddWarpResult.DUPLICATE_NAME
-        warpsInternal.add(Warp(n, pos, dimension))
-        setDirty()
-        return AddWarpResult.SUCCESS
-    }
+	fun add(name: String, pos: BlockPos, dimension: ResourceKey<Level>): AddWarpResult {
+		val n = name.lowercase()
+		if (warpsInternal.any { it.name == n }) return AddWarpResult.DUPLICATE_NAME
+		warpsInternal.add(Warp(n, pos, dimension))
+		setDirty()
+		return AddWarpResult.SUCCESS
+	}
 
-    fun remove(name: String): RemoveWarpResult {
-        val n = name.lowercase()
-        if (warpsInternal.none { it.name == n }) return RemoveWarpResult.NOT_FOUND
-        warpsInternal.removeIf { it.name == n }
-        setDirty()
-        return RemoveWarpResult.SUCCESS
-    }
+	fun remove(name: String): RemoveWarpResult {
+		val n = name.lowercase()
+		if (warpsInternal.none { it.name == n }) return RemoveWarpResult.NOT_FOUND
+		warpsInternal.removeIf { it.name == n }
+		setDirty()
+		return RemoveWarpResult.SUCCESS
+	}
 
-    override fun save(tag: CompoundTag, provider: HolderLookup.Provider): CompoundTag {
-        val ops = provider.createSerializationContext(NbtOps.INSTANCE)
-        Warp.CODEC.listOf().encodeStart(ops, warpsInternal.toList())
-            .resultOrPartial { error -> throw IllegalStateException("Failed to save warps: $error") }
-            .ifPresent { tag.put("warps", it) }
-        return tag
-    }
+	override fun save(tag: CompoundTag, provider: HolderLookup.Provider): CompoundTag {
+		val ops = provider.createSerializationContext(NbtOps.INSTANCE)
+		Warp.CODEC.listOf().encodeStart(ops, warpsInternal.toList())
+			.resultOrPartial { error -> throw IllegalStateException("Failed to save warps: $error") }
+			.ifPresent { tag.put("warps", it) }
+		return tag
+	}
 
-    companion object {
-        const val DATA_NAME = "daisy_warps"
+	companion object {
+		const val DATA_NAME = "daisy_warps"
 
-        val FACTORY = Factory(
-            ::DaisyWarps,
-            { tag, provider -> load(tag, provider) },
-            null
-        )
+		val FACTORY = Factory(
+			::DaisyWarps,
+			{ tag, provider -> load(tag, provider) },
+			null
+		)
 
-        private fun load(tag: CompoundTag, provider: HolderLookup.Provider): DaisyWarps {
-            val instance = DaisyWarps()
-            if (!tag.contains("warps")) return instance
+		private fun load(tag: CompoundTag, provider: HolderLookup.Provider): DaisyWarps {
+			val instance = DaisyWarps()
+			if (!tag.contains("warps")) return instance
 
-            val ops = provider.createSerializationContext(NbtOps.INSTANCE)
-            Warp.CODEC.listOf().parse(ops, tag.get("warps"))
-                .resultOrPartial { error -> throw IllegalStateException("Failed to load warps: $error") }
-                .ifPresent { instance.warpsInternal.addAll(it) }
+			val ops = provider.createSerializationContext(NbtOps.INSTANCE)
+			Warp.CODEC.listOf().parse(ops, tag.get("warps"))
+				.resultOrPartial { error -> throw IllegalStateException("Failed to load warps: $error") }
+				.ifPresent { instance.warpsInternal.addAll(it) }
 
-            return instance
-        }
+			return instance
+		}
 
-        fun get(server: MinecraftServer): DaisyWarps =
-            server.overworld().dataStorage.computeIfAbsent(FACTORY, DATA_NAME)
-    }
+		fun get(server: MinecraftServer): DaisyWarps =
+			server.overworld().dataStorage.computeIfAbsent(FACTORY, DATA_NAME)
+	}
 }

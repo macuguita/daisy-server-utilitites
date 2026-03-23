@@ -23,6 +23,6 @@
 package com.macuguita.daisy.daisy_warp.data
 
 enum class RemoveWarpResult {
-    SUCCESS,
-    NOT_FOUND,
+	SUCCESS,
+	NOT_FOUND,
 }

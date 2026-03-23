@@ -1,0 +1,14 @@
+{
+  "daisy.command.tpaacept.error.no_requests": "You have no pending requests.",
+  "daisy.command.tpaacept.error.no_requests_from_player": "You have no request from %s.",
+  "daisy.command.tpaacept.feedback.target": "%s has teleported to you.",
+  "daisy.command.tpaacept.feedback.requester": "You have teleported to %s.",
+  "daisy.command.error.self_teleport": "You cannot request a teleport to yourself.",
+  "daisy.command.error.request_already_exists": "You already have a pending request to this player.",
+  "daisy.command.accept_button": "[Click to accept]",
+  "daisy.tooltip.accept_teleport": "Click to accept teleport request",
+  "daisy.command.tpa.sender.to": "Sent teleport request to %s",
+  "daisy.command.tpa.sender.here": "Requested %s to teleport to you",
+  "daisy.command.tpa.target.to": "%s wants to teleport to you.",
+  "daisy.command.tpa.target.here": "%s wants you to teleport to them."
+}

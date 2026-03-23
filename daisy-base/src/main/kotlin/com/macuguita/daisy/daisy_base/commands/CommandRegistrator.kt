@@ -26,5 +26,5 @@ import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.commands.CommandSourceStack
 
 interface CommandRegistrator {
-    fun register(dispatcher: CommandDispatcher<CommandSourceStack>)
+	fun register(dispatcher: CommandDispatcher<CommandSourceStack>)
 }

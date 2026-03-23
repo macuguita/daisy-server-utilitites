@@ -23,7 +23,7 @@
 package com.macuguta.daisy.daisy_home.data
 
 enum class AddHomeResult {
-    SUCCESS,
-    AT_CAPACITY,
-    DUPLICATE_NAME
+	SUCCESS,
+	AT_CAPACITY,
+	DUPLICATE_NAME
 }

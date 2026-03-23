@@ -1,0 +1,2 @@
+classTweaker v1 named
+transitive-inject-interface net/minecraft/world/level/storage/PlayerDataStorage com/macuguita/daisy/daisy_base/duck/CustomPlayerDataStorage

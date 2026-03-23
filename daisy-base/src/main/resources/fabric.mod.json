@@ -12,8 +12,12 @@
     "sources": "https://github.com/macuguita/daisy-server-utilitites"
   },
   "license": "MIT",
-  "icon": "assets/icon.png",
+  "icon": "assets/daisy-base/icon.png",
   "environment": "*",
+  "mixins": [
+    "daisy-base.mixins.json"
+  ],
+  "accessWidener": "daisy-base.classtweaker",
   "depends": {
     "fabricloader": ">=0.18.4",
     "minecraft": "~1.21.1",

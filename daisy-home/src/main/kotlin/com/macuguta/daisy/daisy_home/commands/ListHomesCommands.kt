@@ -22,150 +22,138 @@
 
 package com.macuguta.daisy.daisy_home.commands
 
-import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
-import com.macuguita.daisy.daisy_base.commands.CommandResult
-import com.macuguita.daisy.daisy_home.mixin.MinecraftServerAccessor
-import com.macuguita.daisy.daisy_home.mixin.PlayerDataStorageAccessor
 import com.macuguta.daisy.daisy_home.attachments.HomeAttachedData
 import com.macuguta.daisy.daisy_home.attachments.Homes
 import com.macuguta.daisy.daisy_home.data.Home
+import java.util.*
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands.argument
 import net.minecraft.commands.Commands.literal
 import net.minecraft.commands.arguments.GameProfileArgument
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtOps
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.HoverEvent
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.server.MinecraftServer
-import java.io.File
+import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
+import com.macuguita.daisy.daisy_base.commands.CommandResult
+import com.macuguita.daisy.daisy_home.mixin.MinecraftServerAccessor
 
 object ListHomesCommands : CommandRegistrator {
-    override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
+	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
 
-        dispatcher.register(
-            literal("homes")
-                .executes { ctx ->
-                    val player = ctx.source.playerOrException
-                    val homes = Homes.get(player).homes
-                    sendHomeList(ctx.source, player.name.string, homes, useHomeCommand = true)
-                }
-        )
+		dispatcher.register(
+			literal("homes")
+				.executes { ctx ->
+					val player = ctx.source.playerOrException
+					val homes = Homes.get(player).homes
+					sendHomeList(ctx.source, player.name.string, homes, useHomeCommand = true)
+				}
+		)
 
-        dispatcher.register(
-            literal("playerhomes")
-                .requires { it.hasPermission(2) }
-                .then(
-                    argument("player", GameProfileArgument.gameProfile())
-                        .executes { ctx ->
-                            val profiles = GameProfileArgument.getGameProfiles(ctx, "player")
-                            if (profiles.size != 1) {
-                                ctx.source.sendFailure(
-                                    Component.literal("Please specify exactly one player.")
-                                        .withStyle(ChatFormatting.RED)
-                                )
-                                return@executes CommandResult.FAILURE.value
-                            }
+		dispatcher.register(
+			literal("playerhomes")
+				.requires { it.hasPermission(2) }
+				.then(
+					argument("player", GameProfileArgument.gameProfile())
+						.executes { ctx ->
+							val profiles = GameProfileArgument.getGameProfiles(ctx, "player")
+							if (profiles.size != 1) {
+								ctx.source.sendFailure(
+									Component.literal("Please specify exactly one player.")
+										.withStyle(ChatFormatting.RED)
+								)
+								return@executes CommandResult.FAILURE.value
+							}
 
-                            val profile = profiles.first()
-                            val server = ctx.source.server
-                            val onlinePlayer = server.playerList.getPlayer(profile.id)
-                            val homes = if (onlinePlayer != null) {
-                                Homes.get(onlinePlayer).homes
-                            } else {
-                                getOfflineHomes(server, profile.id)
-                            }
+							val profile = profiles.first()
+							val server = ctx.source.server
+							val onlinePlayer = server.playerList.getPlayer(profile.id)
+							val homes = if (onlinePlayer != null) {
+								Homes.get(onlinePlayer).homes
+							} else {
+								getOfflineHomes(server, profile.id)
+							}
 
-                            if (homes == null) {
-                                ctx.source.sendFailure(
-                                    Component.literal("Could not find homes for '${profile.name}'.")
-                                        .withStyle(ChatFormatting.RED)
-                                )
-                                return@executes CommandResult.FAILURE.value
-                            }
+							if (homes == null) {
+								ctx.source.sendFailure(
+									Component.literal("Could not find homes for '${profile.name}'.")
+										.withStyle(ChatFormatting.RED)
+								)
+								return@executes CommandResult.FAILURE.value
+							}
 
-                            sendHomeList(ctx.source, profile.name, homes, useHomeCommand = false)
-                        }
-                )
-        )
-    }
+							sendHomeList(ctx.source, profile.name, homes, useHomeCommand = false)
+						}
+				)
+		)
+	}
 
-    private fun getOfflineHomes(server: MinecraftServer, uuid: java.util.UUID): List<Home>? {
-        val playerDataStorageAccessor =
-            (server as MinecraftServerAccessor).`daisy_home$getPlayerDataStorage`() as PlayerDataStorageAccessor
-        val playerDir = playerDataStorageAccessor.`daisy_home$getPlayerDir`()
-        val file = File(playerDir, "$uuid.dat")
+	private fun getOfflineHomes(server: MinecraftServer, uuid: UUID): List<Home>? {
+		val nbt: CompoundTag =
+			(server as MinecraftServerAccessor).`daisy_home$getPlayerDataStorage`().`daisy$getNbt`(uuid)
 
-        if (!file.exists() || !file.isFile) return null
+		val attachments = nbt.getCompound("fabric:attachments")
+		if (!attachments.contains("daisy-home:homes")) return null
 
-        val nbt = try {
-            net.minecraft.nbt.NbtIo.readCompressed(
-                file.toPath(),
-                net.minecraft.nbt.NbtAccounter.unlimitedHeap()
-            )
-        } catch (e: Exception) {
-            return null
-        }
+		return HomeAttachedData.CODEC
+			.parse(NbtOps.INSTANCE, attachments.getCompound("daisy-home:homes"))
+			.resultOrPartial { }
+			.map { it.homes }
+			.orElse(null)
+	}
 
-        val attachments = nbt.getCompound("fabric:attachments")
-        if (!attachments.contains("daisy-home:homes")) return null
+	private fun sendHomeList(
+		source: CommandSourceStack,
+		playerName: String,
+		homes: List<Home>,
+		useHomeCommand: Boolean,
+	): Int {
+		if (homes.isEmpty()) {
+			source.sendFailure(
+				Component.translatable("command.homes.error.no_homes", playerName)
+					.withStyle(ChatFormatting.RED)
+			)
+			return CommandResult.FAILURE.value
+		}
 
-        return HomeAttachedData.CODEC
-            .parse(net.minecraft.nbt.NbtOps.INSTANCE, attachments.getCompound("daisy-home:homes"))
-            .resultOrPartial { }
-            .map { it.homes }
-            .orElse(null)
-    }
+		val text: MutableComponent = Component.translatable("command.homes.feedback.1", playerName)
 
-    private fun sendHomeList(
-        source: CommandSourceStack,
-        playerName: String,
-        homes: List<Home>,
-        useHomeCommand: Boolean
-    ): Int {
-        if (homes.isEmpty()) {
-            source.sendFailure(
-                Component.literal("$playerName has no homes set.")
-                    .withStyle(ChatFormatting.RED)
-            )
-            return CommandResult.FAILURE.value
-        }
+		homes.forEach { home ->
+			val pos = home.position
+			val dim = home.dimension.location()
 
-        val text: MutableComponent = Component.literal("$playerName's Homes:")
+			val clickCommand = if (useHomeCommand) {
+				"/home ${home.name}"
+			} else {
+				"/execute in $dim run tp @s ${pos.x} ${pos.y} ${pos.z}"
+			}
 
-        homes.forEach { home ->
-            val pos = home.position
-            val dim = home.dimension.location()
+			val locationText = Component.literal(
+				"\n${home.name}: "
+			).append(
+				Component.literal("$dim [${pos.x}, ${pos.y}, ${pos.z}]")
+					.withStyle { style ->
+						style
+							.withColor(ChatFormatting.GREEN)
+							.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand))
+							.withHoverEvent(
+								HoverEvent(
+									HoverEvent.Action.SHOW_TEXT,
+									Component.translatable("daisy.tooltip.teleport")
+								)
+							)
+					}
+			)
 
-            val clickCommand = if (useHomeCommand) {
-                "/home ${home.name}"
-            } else {
-                "/execute in $dim run tp @s ${pos.x} ${pos.y} ${pos.z}"
-            }
+			text.append(locationText)
+		}
 
-            val locationText = Component.literal(
-                "\n${home.name}: "
-            ).append(
-                Component.literal("$dim [${pos.x}, ${pos.y}, ${pos.z}]")
-                    .withStyle { style ->
-                        style
-                            .withColor(ChatFormatting.GREEN)
-                            .withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand))
-                            .withHoverEvent(
-                                HoverEvent(
-                                    HoverEvent.Action.SHOW_TEXT,
-                                    Component.literal("Click to teleport")
-                                )
-                            )
-                    }
-            )
-
-            text.append(locationText)
-        }
-
-        source.sendSuccess({ text }, false)
-        return CommandResult.SUCCESS.value
-    }
+		source.sendSuccess({ text }, false)
+		return CommandResult.SUCCESS.value
+	}
 }

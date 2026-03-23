@@ -22,10 +22,6 @@
 
 package com.macuguita.daisy.daisy_warp.commands
 
-import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
-import com.macuguita.daisy.daisy_base.commands.CommandResult
-import com.macuguita.daisy.daisy_warp.data.AddWarpResult
-import com.macuguita.daisy.daisy_warp.saveddata.DaisyWarps
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.ChatFormatting
@@ -34,42 +30,56 @@ import net.minecraft.commands.Commands.argument
 import net.minecraft.commands.Commands.literal
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
+import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
+import com.macuguita.daisy.daisy_base.commands.CommandResult
+import com.macuguita.daisy.daisy_warp.data.AddWarpResult
+import com.macuguita.daisy.daisy_warp.saveddata.DaisyWarps
 
 object AddWarpCommand : CommandRegistrator {
-    override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
-        dispatcher.register(
-            literal("addwarp")
-                .requires { it.hasPermission(2) }
-                .then(
-                    argument("name", StringArgumentType.word())
-                        .executes { ctx ->
-                            val player = ctx.source.playerOrException
-                            val name = StringArgumentType.getString(ctx, "name")
-                            addWarp(ctx.source, player, name)
-                        }
-                )
-        )
-    }
+	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
+		dispatcher.register(
+			literal("addwarp")
+				.requires { it.hasPermission(2) }
+				.then(
+					argument("name", StringArgumentType.word())
+						.executes { ctx ->
+							val player = ctx.source.playerOrException
+							val name = StringArgumentType.getString(ctx, "name")
+							addWarp(ctx.source, player, name)
+						}
+				)
+		)
+	}
 
-    private fun addWarp(source: CommandSourceStack, player: ServerPlayer, name: String): Int {
-        val warps = DaisyWarps.get(source.server)
+	private fun addWarp(source: CommandSourceStack, player: ServerPlayer, name: String): Int {
+		val warps = DaisyWarps.get(source.server)
 
-        return when (warps.add(name, player.blockPosition(), player.level().dimension())) {
-            AddWarpResult.SUCCESS -> {
-                source.sendSuccess(
-                    { Component.literal("Warp '$name' created at ${player.blockPosition().x}, ${player.blockPosition().y}, ${player.blockPosition().z}.") },
-                    true
-                )
-                CommandResult.SUCCESS.value
-            }
+		return when (warps.add(name, player.blockPosition(), player.level().dimension())) {
+			AddWarpResult.SUCCESS -> {
+				source.sendSuccess(
+					{
+						Component.translatable(
+							"daisy.command.addwarp.success",
+							name,
+							player.blockPosition().x,
+							player.blockPosition().y,
+							player.blockPosition().z
+						)
+					},
+					true
+				)
+				CommandResult.SUCCESS.value
+			}
 
-            AddWarpResult.DUPLICATE_NAME -> {
-                source.sendFailure(
-                    Component.literal("A warp named '$name' already exists.")
-                        .withStyle(ChatFormatting.RED)
-                )
-                CommandResult.FAILURE.value
-            }
-        }
-    }
+			AddWarpResult.DUPLICATE_NAME -> {
+				source.sendFailure(
+					Component.translatable(
+						"daisy.command.addwarp.error.duplicate_name",
+						name
+					).withStyle(ChatFormatting.RED)
+				)
+				CommandResult.FAILURE.value
+			}
+		}
+	}
 }

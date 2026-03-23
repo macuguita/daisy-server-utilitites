@@ -25,14 +25,14 @@ package com.macuguta.daisy.daisy_home
 import com.macuguita.daisy.daisy_base.config.ModuleConfig
 
 class HomeConfig : ModuleConfig("daisy/home.properties") {
-    var maxDefaultHomes: Int = 3
-        private set
+	var maxDefaultHomes: Int = 3
+		private set
 
-    override fun configure() {
-        maxDefaultHomes = int("maxDefaultHomes", 3)
-    }
+	override fun configure() {
+		maxDefaultHomes = int("maxDefaultHomes", 3)
+	}
 
-    companion object {
-        val INSTANCE = HomeConfig().also { it.load() }
-    }
+	companion object {
+		val INSTANCE = HomeConfig().also { it.load() }
+	}
 }

@@ -4,6 +4,8 @@ root = true
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
+indent_style = space
+indent_size = 4
 tab_width = 4
 
 [*.gradle]
@@ -11,29 +13,26 @@ indent_style = tab
 
 [*.java]
 indent_style = tab
-ij_continuation_indent_size = 8
-ij_java_imports_layout = $*, |, java.**, |, javax.**, |, *, |, net.minecraft.**, |, net.fabricmc.**, |, net.neoforged.**
+ij_java_blank_lines_after_imports = 1
+ij_java_blank_lines_before_imports = 1
+ij_java_use_single_class_imports = true
+ij_java_layout_static_imports_separately = true
+ij_java_imports_layout = *,$*,|,com.llamalad7.mixinextras.**,org.spongepowered.**,|,com.mojang.**,net.minecraft.**,|,net.fabricmc.**,|,net.neoforged.**,|,com.macuguita.**
 ij_java_class_count_to_use_import_on_demand = 999
+ij_java_names_count_to_use_import_on_demand = 999
 
-[*.kt]
+[*{.kt,.kts}]
 indent_style = tab
 ij_continuation_indent_size = 8
-ij_kotlin_imports_layout = *,java.**,javax.**,kotlin.**,|,net.minecraft.**,net.fabricmc.**,net.neoforged.**
+ij_kotlin_imports_layout = *,$*,|,com.mojang.**,^com.mojang.**,net.minecraft.**,^net.minecraft.**,|,net.fabricmc.**,^net.fabricmc.**,|,net.neoforged.**,^net.neoforged.**,|,com.macuguita.**,^com.macuguita.**
 ij_kotlin_name_count_to_use_star_import = 999
 ij_kotlin_allow_trailing_comma = true
 
-[*.kts]
-indent_style = tab
-ij_continuation_indent_size = 8
+[*.bat]
+end_of_line = crlf
 
-[*.json]
-indent_style = space
+[*.{json,mcmeta}]
 indent_size = 2
 
 [*.properties]
-indent_style = space
 indent_size = 2
-
-[.editorconfig]
-indent_style = space
-indent_size = 4

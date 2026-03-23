@@ -22,70 +22,70 @@
 
 package com.macuguita.daisy.daisy_base.config
 
-import net.fabricmc.loader.api.FabricLoader
-import org.slf4j.LoggerFactory
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
+import org.slf4j.LoggerFactory
+import net.fabricmc.loader.api.FabricLoader
 
 abstract class ModuleConfig(
-    private val fileName: String
+	private val fileName: String,
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
-    private val properties = Properties()
-    private val path: Path = FabricLoader.getInstance().configDir.resolve(fileName)
+	private val logger = LoggerFactory.getLogger(this::class.java)
+	private val properties = Properties()
+	private val path: Path = FabricLoader.getInstance().configDir.resolve(fileName)
 
-    var isEnabled: Boolean = true
-        private set
+	var isEnabled: Boolean = true
+		private set
 
-    fun load() {
-        Files.createDirectories(path.parent)
+	fun load() {
+		Files.createDirectories(path.parent)
 
-        if (Files.exists(path)) {
-            Files.newBufferedReader(path).use { properties.load(it) }
-        }
+		if (Files.exists(path)) {
+			Files.newBufferedReader(path).use { properties.load(it) }
+		}
 
-        // Always loaded first so it appears at the top of the config file
-        isEnabled = boolean("enableModule", true)
-        configure()
+		// Always loaded first so it appears at the top of the config file
+		isEnabled = boolean("enableModule", true)
+		configure()
 
-        Files.newBufferedWriter(path).use { properties.store(it, "Daisy Config - $fileName") }
-    }
+		Files.newBufferedWriter(path).use { properties.store(it, "Daisy Config - $fileName") }
+	}
 
-    protected abstract fun configure()
+	protected abstract fun configure()
 
-    protected fun string(key: String, default: String): String {
-        if (!properties.containsKey(key)) properties.setProperty(key, default)
-        return properties.getProperty(key)
-    }
+	protected fun string(key: String, default: String): String {
+		if (!properties.containsKey(key)) properties.setProperty(key, default)
+		return properties.getProperty(key)
+	}
 
-    protected fun int(key: String, default: Int): Int =
-        string(key, "$default").toIntOrNull() ?: default.also {
-            logger.warn("Couldn't load '$key' in $fileName, using default: $default")
-        }
+	protected fun int(key: String, default: Int): Int =
+		string(key, "$default").toIntOrNull() ?: default.also {
+			logger.warn("Couldn't load '$key' in $fileName, using default: $default")
+		}
 
-    protected fun boolean(key: String, default: Boolean): Boolean =
-        string(key, "$default").toBooleanStrictOrNull() ?: default.also {
-            logger.warn("Couldn't load '$key' in $fileName, using default: $default")
-        }
+	protected fun boolean(key: String, default: Boolean): Boolean =
+		string(key, "$default").toBooleanStrictOrNull() ?: default.also {
+			logger.warn("Couldn't load '$key' in $fileName, using default: $default")
+		}
 
-    protected fun long(key: String, default: Long): Long =
-        string(key, "$default").toLongOrNull() ?: default.also {
-            logger.warn("Couldn't load '$key' in $fileName, using default: $default")
-        }
+	protected fun long(key: String, default: Long): Long =
+		string(key, "$default").toLongOrNull() ?: default.also {
+			logger.warn("Couldn't load '$key' in $fileName, using default: $default")
+		}
 
-    protected fun uuids(key: String, default: Set<UUID> = emptySet()): Set<UUID> =
-        string(key, default.joinToString(","))
-            .split(',')
-            .map { it.trim() }
-            .filter { it.isNotBlank() }
-            .mapNotNull {
-                try {
-                    UUID.fromString(it)
-                } catch (e: IllegalArgumentException) {
-                    logger.warn("Invalid UUID '$it' in $fileName")
-                    null
-                }
-            }
-            .toSet()
+	protected fun uuids(key: String, default: Set<UUID> = emptySet()): Set<UUID> =
+		string(key, default.joinToString(","))
+			.split(',')
+			.map { it.trim() }
+			.filter { it.isNotBlank() }
+			.mapNotNull {
+				try {
+					UUID.fromString(it)
+				} catch (e: IllegalArgumentException) {
+					logger.warn("Invalid UUID '$it' in $fileName")
+					null
+				}
+			}
+			.toSet()
 }

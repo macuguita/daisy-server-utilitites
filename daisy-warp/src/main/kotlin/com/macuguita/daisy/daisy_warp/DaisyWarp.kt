@@ -22,19 +22,25 @@
 
 package com.macuguita.daisy.daisy_warp
 
-import com.macuguita.daisy.daisy_warp.commands.*
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import com.macuguita.daisy.daisy_warp.commands.AddWarpCommand
+import com.macuguita.daisy.daisy_warp.commands.DelWarpCommand
+import com.macuguita.daisy.daisy_warp.commands.SpawnCommand
+import com.macuguita.daisy.daisy_warp.commands.WarpCommand
+import com.macuguita.daisy.daisy_warp.commands.WarpsCommand
 
 object DaisyWarp : ModInitializer {
-    override fun onInitialize() {
-        if (!WarpConfig.INSTANCE.isEnabled) return
-        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
-            AddWarpCommand.register(dispatcher)
-            DelWarpCommand.register(dispatcher)
-            SpawnCommand.register(dispatcher)
-            WarpCommand.register(dispatcher)
-            WarpsCommand.register(dispatcher)
-        }
-    }
+	override fun onInitialize() {
+		if (!WarpConfig.INSTANCE.isEnabled) return
+		CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+			AddWarpCommand.register(dispatcher)
+			DelWarpCommand.register(dispatcher)
+			if (WarpConfig.INSTANCE.allowSpawnCommand) {
+				SpawnCommand.register(dispatcher)
+			}
+			WarpCommand.register(dispatcher)
+			WarpsCommand.register(dispatcher)
+		}
+	}
 }

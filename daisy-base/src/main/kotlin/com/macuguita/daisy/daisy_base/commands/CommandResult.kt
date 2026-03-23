@@ -23,11 +23,11 @@
 package com.macuguita.daisy.daisy_base.commands
 
 enum class CommandResult(val value: Int) {
-    SUCCESS(1),
-    FAILURE(0);
+	SUCCESS(1),
+	FAILURE(0);
 
-    companion object {
-        fun fromBoolean(success: Boolean): CommandResult =
-            if (success) SUCCESS else FAILURE
-    }
+	companion object {
+		fun fromBoolean(success: Boolean): CommandResult =
+			if (success) SUCCESS else FAILURE
+	}
 }

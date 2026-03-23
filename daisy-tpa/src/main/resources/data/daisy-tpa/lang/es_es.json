@@ -1,0 +1,14 @@
+{
+  "daisy.command.tpaacept.error.no_requests": "No tienes solicitudes pendientes.",
+  "daisy.command.tpaacept.error.no_requests_from_player": "No tienes solicitudes de %s.",
+  "daisy.command.tpaacept.feedback.target": "%s se ha teletransportado a ti.",
+  "daisy.command.tpaacept.feedback.requester": "Te has teletransportado a %s.",
+  "daisy.command.error.self_teleport": "No puedes solicitar teletransportarte a ti mismo.",
+  "daisy.command.error.request_already_exists": "Ya tienes una solicitud pendiente con este jugador.",
+  "daisy.command.accept_button": "[Haz clic para aceptar]",
+  "daisy.tooltip.accept_teleport": "Haz clic para aceptar la solicitud de teletransporte",
+  "daisy.command.tpa.sender.to": "Solicitud de teletransporte enviada a %s",
+  "daisy.command.tpa.sender.here": "Has solicitado que %s se teletransporte a ti",
+  "daisy.command.tpa.target.to": "%s quiere teletransportarse a ti.",
+  "daisy.command.tpa.target.here": "%s quiere que te teletransportes a él/ella."
+}

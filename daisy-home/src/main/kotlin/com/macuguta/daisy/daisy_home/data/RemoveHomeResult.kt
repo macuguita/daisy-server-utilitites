@@ -23,6 +23,6 @@
 package com.macuguta.daisy.daisy_home.data
 
 enum class RemoveHomeResult {
-    SUCCESS,
-    NOT_FOUND
+	SUCCESS,
+	NOT_FOUND
 }

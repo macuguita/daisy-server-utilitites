@@ -23,6 +23,6 @@
 package com.macuguita.daisy.daisy_tpa.data
 
 enum class TpaType {
-    TO,
-    HERE
+	TO,
+	HERE
 }

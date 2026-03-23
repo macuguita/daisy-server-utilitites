@@ -12,7 +12,7 @@
     "sources": "https://github.com/macuguita/daisy-server-utilitites"
   },
   "license": "MIT",
-  "icon": "assets/icon.png",
+  "icon": "assets/daisy-tpa/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [

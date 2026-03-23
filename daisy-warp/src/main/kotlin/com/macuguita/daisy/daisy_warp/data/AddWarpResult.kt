@@ -23,6 +23,6 @@
 package com.macuguita.daisy.daisy_warp.data
 
 enum class AddWarpResult {
-    SUCCESS,
-    DUPLICATE_NAME,
+	SUCCESS,
+	DUPLICATE_NAME,
 }

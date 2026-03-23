@@ -22,9 +22,6 @@
 
 package com.macuguita.daisy.daisy_warp.commands
 
-import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
-import com.macuguita.daisy.daisy_base.commands.CommandResult
-import com.macuguita.daisy.daisy_warp.saveddata.DaisyWarps
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.ChatFormatting
@@ -34,55 +31,60 @@ import net.minecraft.commands.Commands.literal
 import net.minecraft.network.chat.Component
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
+import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
+import com.macuguita.daisy.daisy_base.commands.CommandResult
+import com.macuguita.daisy.daisy_warp.saveddata.DaisyWarps
 
 object WarpCommand : CommandRegistrator {
-    override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
-        dispatcher.register(
-            literal("warp")
-                .then(
-                    argument("name", StringArgumentType.word())
-                        .suggests { ctx, builder ->
-                            DaisyWarps.get(ctx.source.server).all()
-                                .forEach { builder.suggest(it.name) }
-                            builder.buildFuture()
-                        }
-                        .executes { ctx ->
-                            val player = ctx.source.playerOrException
-                            val name = StringArgumentType.getString(ctx, "name")
-                            warp(player, ctx.source.server, name)
-                        }
-                )
-        )
-    }
+	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
+		dispatcher.register(
+			literal("warp")
+				.then(
+					argument("name", StringArgumentType.word())
+						.suggests { ctx, builder ->
+							DaisyWarps.get(ctx.source.server).all()
+								.forEach { builder.suggest(it.name) }
+							builder.buildFuture()
+						}
+						.executes { ctx ->
+							val player = ctx.source.playerOrException
+							val name = StringArgumentType.getString(ctx, "name")
+							warp(player, ctx.source.server, name)
+						}
+				)
+		)
+	}
 
-    private fun warp(player: ServerPlayer, server: MinecraftServer, name: String): Int {
-        val warps = DaisyWarps.get(server)
+	private fun warp(player: ServerPlayer, server: MinecraftServer, name: String): Int {
+		val warps = DaisyWarps.get(server)
 
-        val warp = warps.find(name)
-            ?: return CommandResult.FAILURE.value.also {
-                player.sendSystemMessage(
-                    Component.literal("Warp '$name' does not exist.")
-                        .withStyle(ChatFormatting.RED)
-                )
-            }
+		val warp = warps.find(name)
+			?: return CommandResult.FAILURE.value.also {
+				player.sendSystemMessage(
+					Component.translatable("daisy.command.warp.error.not_found", name)
+						.withStyle(ChatFormatting.RED)
+				)
+			}
 
-        val level = server.getLevel(warp.dimension)
-            ?: return CommandResult.FAILURE.value.also {
-                player.sendSystemMessage(
-                    Component.literal("Could not find dimension '${warp.dimension.location()}'.")
-                        .withStyle(ChatFormatting.RED)
-                )
-            }
+		val level = server.getLevel(warp.dimension)
+			?: return CommandResult.FAILURE.value.also {
+				player.sendSystemMessage(
+					Component.translatable(
+						"daisy.command.warp.error.level_not_found",
+						warp.dimension.location()
+					).withStyle(ChatFormatting.RED)
+				)
+			}
 
-        player.teleportTo(
-            level,
-            warp.position.x + 0.5,
-            warp.position.y.toDouble(),
-            warp.position.z + 0.5,
-            player.yRot,
-            player.xRot
-        )
-        player.sendSystemMessage(Component.literal("Teleported to warp '$name'."))
-        return CommandResult.SUCCESS.value
-    }
+		player.teleportTo(
+			level,
+			warp.position.x + 0.5,
+			warp.position.y.toDouble(),
+			warp.position.z + 0.5,
+			player.yRot,
+			player.xRot
+		)
+		player.sendSystemMessage(Component.translatable("daisy.command.warp.success", name))
+		return CommandResult.SUCCESS.value
+	}
 }

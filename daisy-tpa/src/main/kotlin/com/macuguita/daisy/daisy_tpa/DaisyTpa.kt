@@ -22,16 +22,8 @@
 
 package com.macuguita.daisy.daisy_tpa
 
-import com.macuguita.daisy.daisy_base.commands.CommandResult
-import com.macuguita.daisy.daisy_tpa.commands.TpaAcceptCommand
-import com.macuguita.daisy.daisy_tpa.commands.TpaCommand
-import com.macuguita.daisy.daisy_tpa.commands.TpaHereCommand
-import com.macuguita.daisy.daisy_tpa.data.TpaManager
-import com.macuguita.daisy.daisy_tpa.data.TpaRequest
-import com.macuguita.daisy.daisy_tpa.data.TpaType
+import org.slf4j.LoggerFactory
 import com.mojang.brigadier.context.CommandContext
-import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.EntityArgument
@@ -39,94 +31,95 @@ import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.HoverEvent
 import net.minecraft.server.level.ServerPlayer
-import org.slf4j.LoggerFactory
+import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import com.macuguita.daisy.daisy_base.commands.CommandResult
+import com.macuguita.daisy.daisy_tpa.commands.TpaAcceptCommand
+import com.macuguita.daisy.daisy_tpa.commands.TpaCommand
+import com.macuguita.daisy.daisy_tpa.commands.TpaHereCommand
+import com.macuguita.daisy.daisy_tpa.data.TpaManager
+import com.macuguita.daisy.daisy_tpa.data.TpaRequest
+import com.macuguita.daisy.daisy_tpa.data.TpaType
 
 object DaisyTpa : ModInitializer {
-    private val MOD_ID = "daisy-tpa"
-    private val LOGGER = LoggerFactory.getLogger(MOD_ID)
+	private val MOD_ID = "daisy-tpa"
+	private val LOGGER = LoggerFactory.getLogger(MOD_ID)
 
-    override fun onInitialize() {
-        if (!TpaConfig.INSTANCE.isEnabled) return
-        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
-            TpaCommand.register(dispatcher)
-            TpaHereCommand.register(dispatcher)
-            TpaAcceptCommand.register(dispatcher)
-        }
-    }
+	override fun onInitialize() {
+		if (!TpaConfig.INSTANCE.isEnabled) return
+		CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+			TpaCommand.register(dispatcher)
+			TpaHereCommand.register(dispatcher)
+			TpaAcceptCommand.register(dispatcher)
+		}
+	}
 
-    fun handle(
-        ctx: CommandContext<CommandSourceStack>,
-        type: TpaType
-    ): Int {
-        val sender = ctx.source.player ?: return CommandResult.FAILURE.value
-        val target = EntityArgument.getPlayer(ctx, "player") ?: return CommandResult.FAILURE.value
+	fun handle(
+		ctx: CommandContext<CommandSourceStack>,
+		type: TpaType,
+	): Int {
+		val sender = ctx.source.player ?: return CommandResult.FAILURE.value
+		val target = EntityArgument.getPlayer(ctx, "player") ?: return CommandResult.FAILURE.value
 
-        if (sender.uuid == target.uuid) {
-            ctx.source.sendFailure(Component.literal("You cannot request a teleport to yourself"))
-            return CommandResult.FAILURE.value
-        }
+		if (sender.uuid == target.uuid) {
+			ctx.source.sendFailure(Component.translatable("daisy.command.error.self_teleport"))
+			return CommandResult.FAILURE.value
+		}
 
-        val success = TpaManager.sendRequest(
-            TpaRequest(
-                requester = sender.uuid,
-                target = target.uuid,
-                type = type,
-                timestamp = System.currentTimeMillis()
-            ),
-            TpaConfig.INSTANCE.requestExpiryMs
-        )
+		val success = TpaManager.sendRequest(
+			TpaRequest(
+				requester = sender.uuid,
+				target = target.uuid,
+				type = type,
+				timestamp = System.currentTimeMillis()
+			),
+			TpaConfig.INSTANCE.requestExpiryMs
+		)
 
-        if (!success) {
-            ctx.source.sendFailure(Component.literal("You already have a pending request to this player"))
-            return CommandResult.FAILURE.value
-        }
+		if (!success) {
+			ctx.source.sendFailure(Component.translatable("daisy.command.error.request_already_exists"))
+			return CommandResult.FAILURE.value
+		}
 
-        sendTpaFeedback(sender, target, type)
-        return CommandResult.SUCCESS.value
-    }
+		sendTpaFeedback(sender, target, type)
+		return CommandResult.SUCCESS.value
+	}
 
-    private fun sendTpaFeedback(sender: ServerPlayer, target: ServerPlayer, type: TpaType) {
-        val senderName = sender.name.string
-        val targetName = target.name.string
+	private fun sendTpaFeedback(sender: ServerPlayer, target: ServerPlayer, type: TpaType) {
+		val senderName = sender.name.string
+		val targetName = target.name.string
 
-        val senderMessage = when (type) {
-            TpaType.TO ->
-                "Sent teleport request to $targetName"
+		val senderMessageKey = when (type) {
+			TpaType.TO -> "daisy.command.tpa.sender.to"
+			TpaType.HERE -> "daisy.command.tpa.sender.here"
+		}
 
-            TpaType.HERE ->
-                "Requested $targetName to teleport to you"
-        }
+		val targetMessageKey = when (type) {
+			TpaType.TO -> "daisy.command.tpa.target.to"
+			TpaType.HERE -> "daisy.command.tpa.target.here"
+		}
 
-        val targetMessage = when (type) {
-            TpaType.TO ->
-                "$senderName wants to teleport to you. "
+		sender.sendSystemMessage(Component.translatable(senderMessageKey, targetName))
+		target.sendSystemMessage(
+			Component.translatable(targetMessageKey, senderName)
+				.append(acceptButton(senderName))
+		)
+	}
 
-            TpaType.HERE ->
-                "$senderName wants you to teleport to them. "
-        }
-
-        sender.sendSystemMessage(Component.literal(senderMessage))
-
-        target.sendSystemMessage(
-            Component.literal(targetMessage)
-                .append(acceptButton(senderName))
-        )
-    }
-
-    private fun acceptButton(senderName: String): Component =
-        Component.literal("[Click to accept]").withStyle {
-            it.withClickEvent(
-                ClickEvent(
-                    ClickEvent.Action.RUN_COMMAND,
-                    "/tpaaccept $senderName"
-                )
-            )
-                .withColor(ChatFormatting.GREEN)
-                .withHoverEvent(
-                    HoverEvent(
-                        HoverEvent.Action.SHOW_TEXT,
-                        Component.literal("Click to accept teleport request")
-                    )
-                )
-        }
+	private fun acceptButton(senderName: String): Component =
+		Component.translatable("daisy.command.accept_button").withStyle {
+			it.withClickEvent(
+				ClickEvent(
+					ClickEvent.Action.RUN_COMMAND,
+					"/tpaaccept $senderName"
+				)
+			)
+				.withColor(ChatFormatting.GREEN)
+				.withHoverEvent(
+					HoverEvent(
+						HoverEvent.Action.SHOW_TEXT,
+						Component.translatable("daisy.tooltip.accept_teleport")
+					)
+				)
+		}
 }

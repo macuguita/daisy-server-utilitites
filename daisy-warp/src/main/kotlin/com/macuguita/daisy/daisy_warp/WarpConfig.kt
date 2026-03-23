@@ -25,11 +25,14 @@ package com.macuguita.daisy.daisy_warp
 import com.macuguita.daisy.daisy_base.config.ModuleConfig
 
 class WarpConfig : ModuleConfig("daisy/warp.properties") {
+	var allowSpawnCommand: Boolean = true
+		private set
 
-    override fun configure() {
-    }
+	override fun configure() {
+		allowSpawnCommand = boolean("allowSpawnCommand", true)
+	}
 
-    companion object {
-        val INSTANCE = WarpConfig().also { it.load() }
-    }
+	companion object {
+		val INSTANCE = WarpConfig().also { it.load() }
+	}
 }

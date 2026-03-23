@@ -22,94 +22,115 @@
 
 package com.macuguita.daisy.daisy_tpa.commands
 
+import com.mojang.brigadier.CommandDispatcher
+import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.Commands.argument
+import net.minecraft.commands.Commands.literal
+import net.minecraft.commands.arguments.EntityArgument
+import net.minecraft.network.chat.Component
+import net.minecraft.server.level.ServerPlayer
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
 import com.macuguita.daisy.daisy_tpa.TpaConfig
 import com.macuguita.daisy.daisy_tpa.data.TpaManager
 import com.macuguita.daisy.daisy_tpa.data.TpaRequest
 import com.macuguita.daisy.daisy_tpa.data.TpaType
-import com.mojang.brigadier.CommandDispatcher
-import net.minecraft.commands.CommandSourceStack
-import net.minecraft.commands.Commands
-import net.minecraft.commands.arguments.EntityArgument
-import net.minecraft.network.chat.Component
-import net.minecraft.server.level.ServerPlayer
 
 object TpaAcceptCommand : CommandRegistrator {
-    override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
-        dispatcher.register(
-            Commands.literal("tpaaccept")
-                .executes { ctx ->
-                    val player = ctx.source.playerOrException
-                    val req = TpaManager.popMostRecent(
-                        player.uuid,
-                        TpaConfig.INSTANCE.requestExpiryMs
-                    ) ?: run {
-                        ctx.source.sendFailure(Component.literal("You have no pending requests"))
-                        return@executes CommandResult.FAILURE.value
-                    }
+	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
+		dispatcher.register(
+			literal("tpaaccept")
+				.executes { ctx ->
+					val player = ctx.source.playerOrException
+					val req = TpaManager.popMostRecent(
+						player.uuid,
+						TpaConfig.INSTANCE.requestExpiryMs
+					) ?: run {
+						ctx.source.sendFailure(Component.translatable("daisy.command.tpaacept.error.no_requests"))
+						return@executes CommandResult.FAILURE.value
+					}
 
-                    executeTeleport(player, req)
-                    CommandResult.SUCCESS.value
-                }
-                .then(
-                    Commands.argument("player", EntityArgument.player())
-                        .executes { ctx ->
-                            val player = ctx.source.playerOrException
-                            val requester = EntityArgument.getPlayer(ctx, "player")
+					executeTeleport(player, req)
+					CommandResult.SUCCESS.value
+				}
+				.then(
+					argument("player", EntityArgument.player())
+						.executes { ctx ->
+							val player = ctx.source.playerOrException
+							val requester = EntityArgument.getPlayer(ctx, "player")
 
-                            val req = TpaManager.popFromRequester(
-                                player.uuid, requester.uuid,
-                                TpaConfig.INSTANCE.requestExpiryMs
-                            ) ?: run {
-                                ctx.source.sendFailure(Component.literal("You have no request from that player"))
-                                return@executes CommandResult.FAILURE.value
-                            }
+							val req = TpaManager.popFromRequester(
+								player.uuid, requester.uuid,
+								TpaConfig.INSTANCE.requestExpiryMs
+							) ?: run {
+								ctx.source.sendFailure(
+									Component.translatable(
+										"daisy.command.tpaacept.error.no_requests_from_player",
+										requester.name.string
+									)
+								)
+								return@executes CommandResult.FAILURE.value
+							}
 
-                            executeTeleport(player, req)
-                            CommandResult.SUCCESS.value
-                        }
-                )
-        )
-    }
+							executeTeleport(player, req)
+							CommandResult.SUCCESS.value
+						}
+				)
+		)
+	}
 
-    private fun executeTeleport(target: ServerPlayer, req: TpaRequest) {
-        val server = target.server ?: return
-        val requester = server.playerList.getPlayer(req.requester) ?: return
+	private fun executeTeleport(target: ServerPlayer, req: TpaRequest) {
+		val server = target.server ?: return
+		val requester = server.playerList.getPlayer(req.requester) ?: return
 
-        val targetName = target.gameProfile.name
-        val requesterName = requester.gameProfile.name
+		val targetName = target.gameProfile.name
+		val requesterName = requester.gameProfile.name
 
-        when (req.type) {
-            TpaType.TO -> {
-                requester.stopRiding()
-                requester.teleportTo(
-                    target.serverLevel(),
-                    target.x,
-                    target.y,
-                    target.z,
-                    target.yRot,
-                    target.xRot
-                )
+		when (req.type) {
+			TpaType.TO -> {
+				requester.stopRiding()
+				requester.teleportTo(
+					target.serverLevel(),
+					target.x,
+					target.y,
+					target.z,
+					target.yRot,
+					target.xRot
+				)
 
-                target.sendSystemMessage(Component.literal("$requesterName has teleported to you"))
-                requester.sendSystemMessage(Component.literal("You have teleported to $targetName"))
-            }
+				target.sendSystemMessage(
+					Component.translatable(
+						"daisy.command.tpaacept.feedback.target",
+						requesterName
+					)
+				)
+				requester.sendSystemMessage(
+					Component.translatable(
+						"daisy.command.tpaacept.feedback.requester",
+						targetName
+					)
+				)
+			}
 
-            TpaType.HERE -> {
-                target.stopRiding()
-                target.teleportTo(
-                    requester.serverLevel(),
-                    requester.x,
-                    requester.y,
-                    requester.z,
-                    requester.yRot,
-                    requester.xRot
-                )
+			TpaType.HERE -> {
+				target.stopRiding()
+				target.teleportTo(
+					requester.serverLevel(),
+					requester.x,
+					requester.y,
+					requester.z,
+					requester.yRot,
+					requester.xRot
+				)
 
-                requester.sendSystemMessage(Component.literal("$targetName has teleported to you"))
-                target.sendSystemMessage(Component.literal("You have teleported to $requesterName"))
-            }
-        }
-    }
+				target.sendSystemMessage(Component.translatable("daisy.command.tpaacept.feedback.target", target))
+				requester.sendSystemMessage(
+					Component.translatable(
+						"daisy.command.tpaacept.feedback.requester",
+						requester
+					)
+				)
+			}
+		}
+	}
 }

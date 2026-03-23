@@ -1,0 +1,14 @@
+{
+  "daisy.command.addwarp.success": "Warp '%s' creado en %d, %d, %d.",
+  "daisy.command.addwarp.error.duplicate_name": "Ya existe un warp llamado '%s'.",
+  "daisy.command.delwarp.success": "Warp '%s' ha sido eliminado.",
+  "daisy.command.delwarp.error.not_found": "El warp '%s' no existe.",
+  "daisy.command.spawn.error.no_overworld": "No se pudo encontrar el mundo principal.",
+  "daisy.command.spawn.success": "Teletransportado al spawn.",
+  "daisy.command.warp.success": "Teletransportado al warp '%s'.",
+  "daisy.command.warp.error.not_found": "El warp '%s' no existe.",
+  "daisy.command.warp.error.level_not_found": "No se pudo encontrar la dimensión '%s'.",
+  "daisy.command.warps.error.no_warps": "No hay warps establecidos.",
+  "daisy.command.warps.header": "Warps:",
+  "daisy.tooltip.teleport": "Haz clic para teletransportarte a %s"
+}

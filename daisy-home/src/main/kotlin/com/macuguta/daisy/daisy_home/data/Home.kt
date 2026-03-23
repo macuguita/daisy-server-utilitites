@@ -31,18 +31,18 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.Level
 
 data class Home(val name: String, val position: BlockPos, val dimension: ResourceKey<Level>) {
-    companion object {
-        private val LEVEL_CODEC = ResourceLocation.CODEC.xmap(
-            { rl -> ResourceKey.create(Registries.DIMENSION, rl) },
-            ResourceKey<Level>::location
-        )
+	companion object {
+		private val LEVEL_CODEC = ResourceLocation.CODEC.xmap(
+			{ rl -> ResourceKey.create(Registries.DIMENSION, rl) },
+			ResourceKey<Level>::location
+		)
 
-        val CODEC: Codec<Home> = RecordCodecBuilder.create { i ->
-            i.group(
-                Codec.STRING.fieldOf("name").forGetter { it.name },
-                BlockPos.CODEC.fieldOf("block_pos").forGetter { it.position },
-                LEVEL_CODEC.optionalFieldOf("dimension", Level.OVERWORLD).forGetter { it.dimension },
-            ).apply(i, ::Home)
-        }
-    }
+		val CODEC: Codec<Home> = RecordCodecBuilder.create { i ->
+			i.group(
+				Codec.STRING.fieldOf("name").forGetter { it.name },
+				BlockPos.CODEC.fieldOf("block_pos").forGetter { it.position },
+				LEVEL_CODEC.optionalFieldOf("dimension", Level.OVERWORLD).forGetter { it.dimension },
+			).apply(i, ::Home)
+		}
+	}
 }

@@ -25,8 +25,8 @@ package com.macuguita.daisy.daisy_tpa.data
 import java.util.*
 
 data class TpaRequest(
-    val requester: UUID,
-    val target: UUID,
-    val type: TpaType,
-    val timestamp: Long
+	val requester: UUID,
+	val target: UUID,
+	val type: TpaType,
+	val timestamp: Long,
 )

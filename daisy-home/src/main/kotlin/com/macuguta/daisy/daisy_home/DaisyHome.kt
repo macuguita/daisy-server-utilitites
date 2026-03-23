@@ -23,39 +23,43 @@
 package com.macuguta.daisy.daisy_home
 
 import com.macuguta.daisy.daisy_home.attachments.Homes
-import com.macuguta.daisy.daisy_home.commands.*
+import com.macuguta.daisy.daisy_home.commands.DelHomeCommand
+import com.macuguta.daisy.daisy_home.commands.HomeCommand
+import com.macuguta.daisy.daisy_home.commands.ListHomesCommands
+import com.macuguta.daisy.daisy_home.commands.SetHomeCommand
+import com.macuguta.daisy.daisy_home.commands.SetMaxHomesCommand
+import java.util.concurrent.CompletableFuture
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.resources.ResourceLocation
-import java.util.concurrent.CompletableFuture
+import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 
 object DaisyHome : ModInitializer {
-    private val MOD_ID = "daisy-home"
+	private val MOD_ID = "daisy-home"
 
-    override fun onInitialize() {
-        if (!HomeConfig.INSTANCE.isEnabled) return
-        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
-            DelHomeCommand.register(dispatcher)
-            HomeCommand.register(dispatcher)
-            ListHomesCommands.register(dispatcher)
-            SetHomeCommand.register(dispatcher)
-            SetMaxHomesCommand.register(dispatcher)
-        }
-    }
+	override fun onInitialize() {
+		if (!HomeConfig.INSTANCE.isEnabled) return
+		CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+			DelHomeCommand.register(dispatcher)
+			HomeCommand.register(dispatcher)
+			ListHomesCommands.register(dispatcher)
+			SetHomeCommand.register(dispatcher)
+			SetMaxHomesCommand.register(dispatcher)
+		}
+	}
 
-    fun String.id(): ResourceLocation = ResourceLocation.fromNamespaceAndPath(MOD_ID, this)
+	fun String.id(): ResourceLocation = ResourceLocation.fromNamespaceAndPath(MOD_ID, this)
 
-    fun suggestHomes(
-        context: CommandContext<CommandSourceStack>,
-        builder: SuggestionsBuilder
-    ): CompletableFuture<Suggestions> {
-        val player = context.source.playerOrException
-        val homeNames = Homes.get(player).homes.map { it.name }
-        homeNames.forEach { builder.suggest(it) }
-        return builder.buildFuture()
-    }
+	fun suggestHomes(
+		context: CommandContext<CommandSourceStack>,
+		builder: SuggestionsBuilder,
+	): CompletableFuture<Suggestions> {
+		val player = context.source.playerOrException
+		val homeNames = Homes.get(player).homes.map { it.name }
+		homeNames.forEach { builder.suggest(it) }
+		return builder.buildFuture()
+	}
 }

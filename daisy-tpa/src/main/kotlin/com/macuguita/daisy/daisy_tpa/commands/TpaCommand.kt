@@ -22,25 +22,25 @@
 
 package com.macuguita.daisy.daisy_tpa.commands
 
-import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
-import com.macuguita.daisy.daisy_tpa.DaisyTpa
-import com.macuguita.daisy.daisy_tpa.data.TpaType
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands.argument
 import net.minecraft.commands.Commands.literal
 import net.minecraft.commands.arguments.EntityArgument
+import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
+import com.macuguita.daisy.daisy_tpa.DaisyTpa
+import com.macuguita.daisy.daisy_tpa.data.TpaType
 
 object TpaCommand : CommandRegistrator {
-    override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
-        dispatcher.register(
-            literal("tpa")
-                .then(
-                    argument("player", EntityArgument.player())
-                        .executes {
-                            DaisyTpa.handle(it, TpaType.TO)
-                        }
-                )
-        )
-    }
+	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
+		dispatcher.register(
+			literal("tpa")
+				.then(
+					argument("player", EntityArgument.player())
+						.executes {
+							DaisyTpa.handle(it, TpaType.TO)
+						}
+				)
+		)
+	}
 }
