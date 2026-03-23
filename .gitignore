@@ -11,7 +11,8 @@ classes/
 
 # idea
 
-.idea/
+.idea/*
+!.idea/icon.svg
 *.iml
 *.ipr
 *.iws
@@ -38,3 +39,7 @@ hs_err_*.log
 replay_*.log
 *.hprof
 *.jfr
+
+# kotlin
+
+.kotlin/
