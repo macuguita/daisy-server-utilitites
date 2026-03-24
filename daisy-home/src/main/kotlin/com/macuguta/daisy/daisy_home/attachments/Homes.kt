@@ -20,6 +20,8 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package com.macuguta.daisy.daisy_home.attachments
 
 import com.macuguta.daisy.daisy_home.DaisyHome.id
@@ -29,9 +31,9 @@ import com.macuguta.daisy.daisy_home.data.Home
 import com.macuguta.daisy.daisy_home.data.RemoveHomeResult
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.level.Level
+import net.minecraft.world.phys.Vec3
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType
@@ -40,7 +42,7 @@ object Homes {
 
 	val ATTACHMENT: AttachmentType<HomeAttachedData> =
 		AttachmentRegistry.create(
-			"homes".id()
+			"homes".id
 		) { builder ->
 			builder
 				.initializer { HomeAttachedData(emptyList(), HomeConfig.INSTANCE.maxDefaultHomes) }
@@ -69,7 +71,7 @@ data class HomeAttachedData(
 			}
 	}
 
-	fun addHome(name: String, pos: BlockPos, dimension: ResourceKey<Level>): Pair<HomeAttachedData, AddHomeResult> {
+	fun addHome(name: String, pos: Vec3, dimension: ResourceKey<Level>): Pair<HomeAttachedData, AddHomeResult> {
 		val n = name.lowercase()
 		if (homes.size >= maxHomes) return this to AddHomeResult.AT_CAPACITY
 		if (homes.any { it.name == n }) return this to AddHomeResult.DUPLICATE_NAME
@@ -99,7 +101,7 @@ data class HomeData(private val target: AttachmentTarget) {
 			)
 		}
 
-	fun addHome(name: String, pos: BlockPos, dimension: ResourceKey<Level>): AddHomeResult {
+	fun addHome(name: String, pos: Vec3, dimension: ResourceKey<Level>): AddHomeResult {
 		val current = current()
 		val (updated, result) = current.addHome(name, pos, dimension)
 		if (result == AddHomeResult.SUCCESS) {

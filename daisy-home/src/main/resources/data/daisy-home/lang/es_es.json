@@ -11,5 +11,7 @@
   "daisy.command.sethome.error.at_capacity": "Has alcanzado el número máximo de hogares (%d).",
   "daisy.command.sethome.error.duplicate_name": "Ya existe un hogar llamado '%s'.",
   "daisy.command.setmaxhomes.feedback.target": "Máximo de hogares establecido a %d.",
-  "daisy.command.setmaxhomes.feedback.user": "Máximo de hogares de %s establecido a %d."
+  "daisy.command.setmaxhomes.feedback.user": "Máximo de hogares de %s establecido a %d.",
+  "daisy.command.playerhomes.error.one_player": "Porfavor especifica solamente a un jugador.",
+  "daisy.command.playerhomes.error.no_homes_found": "No se pudo encontrar casas de '%s'."
 }

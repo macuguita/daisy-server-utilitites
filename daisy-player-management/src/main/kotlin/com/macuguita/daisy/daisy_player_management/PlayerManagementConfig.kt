@@ -20,16 +20,15 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguita.daisy.daisy_home.mixin;
+package com.macuguita.daisy.daisy_player_management;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import com.macuguita.daisy.daisy_base.config.ModuleConfig
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.storage.PlayerDataStorage;
+class PlayerManagementConfig : ModuleConfig("daisy/player_management.properties"){
+	override fun configure() {
+	}
 
-@Mixin(MinecraftServer.class)
-public interface MinecraftServerAccessor {
-	@Accessor("playerDataStorage")
-	PlayerDataStorage daisy_home$getPlayerDataStorage();
+	companion object {
+		val INSTANCE = PlayerManagementConfig().also { it.load() }
+	}
 }

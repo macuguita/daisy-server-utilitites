@@ -58,7 +58,7 @@ object SetHomeCommand : CommandRegistrator {
 	private fun addHome(player: ServerPlayer, name: String): Int {
 		val homeData: HomeData = Homes.get(player)
 
-		return when (homeData.addHome(name, player.blockPosition(), player.level().dimension())) {
+		return when (homeData.addHome(name, player.position(), player.level().dimension())) {
 			AddHomeResult.SUCCESS -> {
 				player.sendSystemMessage(Component.translatable("daisy.command.sethome.success", name))
 				CommandResult.SUCCESS.value

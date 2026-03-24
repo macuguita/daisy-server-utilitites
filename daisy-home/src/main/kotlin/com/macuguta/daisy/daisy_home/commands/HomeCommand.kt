@@ -76,9 +76,9 @@ object HomeCommand : CommandRegistrator {
 
 		player.teleportTo(
 			level,
-			home.position.x + 0.5,
-			home.position.y.toDouble(),
-			home.position.z + 0.5,
+			home.position.x,
+			home.position.y,
+			home.position.z,
 			player.yRot,
 			player.xRot
 		)

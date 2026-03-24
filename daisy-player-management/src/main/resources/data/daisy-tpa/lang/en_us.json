@@ -1,0 +1,5 @@
+{
+  "daisy.command.playerpos.error.one_player": "Please specify exactly one player.",
+  "daisy.command.playerpos.header": "%s was last seen at",
+  "daisy.tooltip.teleport": "Click to teleport"
+}

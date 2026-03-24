@@ -78,9 +78,9 @@ object WarpCommand : CommandRegistrator {
 
 		player.teleportTo(
 			level,
-			warp.position.x + 0.5,
-			warp.position.y.toDouble(),
-			warp.position.z + 0.5,
+			warp.position.x,
+			warp.position.y,
+			warp.position.z,
 			player.yRot,
 			player.xRot
 		)

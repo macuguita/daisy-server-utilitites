@@ -25,5 +25,5 @@ plugins {
 }
 
 loom {
-	accessWidenerPath.set(project.file("src/main/resources/daisy-base.classtweaker"))
+	accessWidenerPath.set(project.file("src/main/resources/daisy-base.accesswidener"))
 }

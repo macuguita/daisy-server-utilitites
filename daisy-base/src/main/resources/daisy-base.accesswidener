@@ -1,0 +1,7 @@
+accessWidener v2 named
+
+#Injected interfaces
+#transitive-inject-interface net/minecraft/world/level/storage/PlayerDataStorage com/macuguita/daisy/daisy_base/duck/CustomPlayerDataStorage
+
+#Other stuff
+transitive-accessible field net/minecraft/server/MinecraftServer playerDataStorage Lnet/minecraft/world/level/storage/PlayerDataStorage;

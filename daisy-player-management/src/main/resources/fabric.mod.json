@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "daisy-home",
+  "id": "daisy-player-management",
   "version": "${version}",
-  "name": "Daisy Home",
-  "description": "Daisy Server utilities home module",
+  "name": "Daisy Player Management",
+  "description": "Daisy Server utilities player management module",
   "authors": [
     "macuguita"
   ],
@@ -12,12 +12,12 @@
     "sources": "https://github.com/macuguita/daisy-server-utilitites"
   },
   "license": "MIT",
-  "icon": "assets/daisy-tpa/icon.png",
+  "icon": "assets/daisy-player-management/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
       {
-        "value": "com.macuguta.daisy.daisy_home.DaisyHome",
+        "value": "com.macuguita.daisy.daisy_player_management.DaisyPlayerManagement",
         "adapter": "kotlin"
       }
     ]

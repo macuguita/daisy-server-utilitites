@@ -20,34 +20,25 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguita.daisy.daisy_warp.data
+package com.macuguita.daisy.daisy_warp.shim;
 
-import com.mojang.serialization.Codec
-import com.mojang.serialization.codecs.RecordCodecBuilder
-import net.minecraft.core.BlockPos
-import net.minecraft.core.registries.Registries
-import net.minecraft.resources.ResourceKey
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.level.Level
-import net.minecraft.world.phys.Vec3
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.world.level.saveddata.SavedData;
 
-data class Warp(
-	val name: String,
-	val position: Vec3,
-	val dimension: ResourceKey<Level>,
-) {
-	companion object {
-		private val LEVEL_CODEC = ResourceLocation.CODEC.xmap(
-			{ rl -> ResourceKey.create(Registries.DIMENSION, rl) },
-			ResourceKey<Level>::location
-		)
+import org.jspecify.annotations.Nullable;
 
-		val CODEC: Codec<Warp> = RecordCodecBuilder.create { i ->
-			i.group(
-				Codec.STRING.fieldOf("name").forGetter { it.name },
-				Vec3.CODEC.fieldOf("block_pos").forGetter { it.position },
-				LEVEL_CODEC.optionalFieldOf("dimension", Level.OVERWORLD).forGetter { it.dimension },
-			).apply(i, ::Warp)
-		}
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
+
+public class Shim {
+
+	public static <T extends SavedData> SavedData.Factory<T> makeFactory(
+		Supplier<T> constructor,
+		BiFunction<CompoundTag, HolderLookup.Provider, T> deserializer,
+		@Nullable DataFixTypes type
+	) {
+		return new SavedData.Factory<>(constructor, deserializer, type);
 	}
 }

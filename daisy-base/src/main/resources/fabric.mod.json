@@ -17,7 +17,7 @@
   "mixins": [
     "daisy-base.mixins.json"
   ],
-  "accessWidener": "daisy-base.classtweaker",
+  "accessWidener": "daisy-base.accesswidener",
   "depends": {
     "fabricloader": ">=0.18.4",
     "minecraft": "~1.21.1",
@@ -30,6 +30,9 @@
       "parent": {
         "id": "daisy-server-utilities"
       }
+    },
+    "loom:injected_interfaces": {
+      "net/minecraft/world/level/storage/PlayerDataStorage": ["com/macuguita/daisy/daisy_base/duck/CustomPlayerDataStorage"]
     }
   }
 }

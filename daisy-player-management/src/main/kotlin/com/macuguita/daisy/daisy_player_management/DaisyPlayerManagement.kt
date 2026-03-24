@@ -20,17 +20,18 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguita.daisy.daisy_home.mixin;
+package com.macuguita.daisy.daisy_player_management
 
-import java.io.File;
+import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import com.macuguita.daisy.daisy_player_management.commands.PlayerPosCommand
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+object DaisyPlayerManagement : ModInitializer {
 
-import net.minecraft.world.level.storage.PlayerDataStorage;
-
-@Mixin(PlayerDataStorage.class)
-public interface PlayerDataStorageAccessor {
-	@Accessor("playerDir")
-	File daisy_home$getPlayerDir();
+	override fun onInitialize() {
+		if (!PlayerManagementConfig.INSTANCE.isEnabled) return
+		CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+			PlayerPosCommand.register(dispatcher)
+		}
+	}
 }

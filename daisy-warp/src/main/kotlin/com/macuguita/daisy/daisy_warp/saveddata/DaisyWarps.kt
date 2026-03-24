@@ -31,9 +31,12 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.server.MinecraftServer
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.saveddata.SavedData
+import net.minecraft.world.phys.Vec3
+import net.fabricmc.loader.impl.lib.sat4j.core.Vec
 import com.macuguita.daisy.daisy_warp.data.AddWarpResult
 import com.macuguita.daisy.daisy_warp.data.RemoveWarpResult
 import com.macuguita.daisy.daisy_warp.data.Warp
+import com.macuguita.daisy.daisy_warp.shim.Shim
 
 class DaisyWarps private constructor(
 	private val warpsInternal: MutableList<Warp> = mutableListOf(),
@@ -45,7 +48,7 @@ class DaisyWarps private constructor(
 
 	fun find(name: String): Warp? = warpsInternal.find { it.name == name.lowercase() }
 
-	fun add(name: String, pos: BlockPos, dimension: ResourceKey<Level>): AddWarpResult {
+	fun add(name: String, pos: Vec3, dimension: ResourceKey<Level>): AddWarpResult {
 		val n = name.lowercase()
 		if (warpsInternal.any { it.name == n }) return AddWarpResult.DUPLICATE_NAME
 		warpsInternal.add(Warp(n, pos, dimension))
@@ -72,7 +75,7 @@ class DaisyWarps private constructor(
 	companion object {
 		const val DATA_NAME = "daisy_warps"
 
-		val FACTORY = Factory(
+		val FACTORY = Shim.makeFactory(
 			::DaisyWarps,
 			{ tag, provider -> load(tag, provider) },
 			null

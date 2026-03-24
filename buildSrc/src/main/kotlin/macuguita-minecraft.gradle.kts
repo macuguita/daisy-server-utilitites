@@ -88,6 +88,8 @@ dependencies {
 	modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
 
 	modLocalRuntime("com.terraformersmc:modmenu:${property("modmenu_version")}")
+
+	compileOnly("org.jspecify:jspecify:1.0.0")
 }
 
 java {

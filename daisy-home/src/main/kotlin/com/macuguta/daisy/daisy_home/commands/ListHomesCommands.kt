@@ -41,7 +41,8 @@ import net.minecraft.network.chat.MutableComponent
 import net.minecraft.server.MinecraftServer
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
-import com.macuguita.daisy.daisy_home.mixin.MinecraftServerAccessor
+import com.macuguita.daisy.daisy_base.toCommandString
+import com.macuguita.daisy.daisy_base.toShortString
 
 object ListHomesCommands : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
@@ -64,7 +65,7 @@ object ListHomesCommands : CommandRegistrator {
 							val profiles = GameProfileArgument.getGameProfiles(ctx, "player")
 							if (profiles.size != 1) {
 								ctx.source.sendFailure(
-									Component.literal("Please specify exactly one player.")
+									Component.translatable("daisy.command.playerhomes.error.one_player")
 										.withStyle(ChatFormatting.RED)
 								)
 								return@executes CommandResult.FAILURE.value
@@ -81,7 +82,7 @@ object ListHomesCommands : CommandRegistrator {
 
 							if (homes == null) {
 								ctx.source.sendFailure(
-									Component.literal("Could not find homes for '${profile.name}'.")
+									Component.translatable("daisy.command.playerhomes.error.no_homes_found", profile.name)
 										.withStyle(ChatFormatting.RED)
 								)
 								return@executes CommandResult.FAILURE.value
@@ -94,8 +95,7 @@ object ListHomesCommands : CommandRegistrator {
 	}
 
 	private fun getOfflineHomes(server: MinecraftServer, uuid: UUID): List<Home>? {
-		val nbt: CompoundTag =
-			(server as MinecraftServerAccessor).`daisy_home$getPlayerDataStorage`().`daisy$getNbt`(uuid)
+		val nbt = server.playerDataStorage.`daisy$getNbt`(uuid)
 
 		val attachments = nbt.getCompound("fabric:attachments")
 		if (!attachments.contains("daisy-home:homes")) return null
@@ -115,13 +115,13 @@ object ListHomesCommands : CommandRegistrator {
 	): Int {
 		if (homes.isEmpty()) {
 			source.sendFailure(
-				Component.translatable("command.homes.error.no_homes", playerName)
+				Component.translatable("daisy.command.homes.error.no_homes", playerName)
 					.withStyle(ChatFormatting.RED)
 			)
 			return CommandResult.FAILURE.value
 		}
 
-		val text: MutableComponent = Component.translatable("command.homes.feedback.1", playerName)
+		val text: MutableComponent = Component.translatable("daisy.command.homes.feedback.1", playerName)
 
 		homes.forEach { home ->
 			val pos = home.position
@@ -130,13 +130,13 @@ object ListHomesCommands : CommandRegistrator {
 			val clickCommand = if (useHomeCommand) {
 				"/home ${home.name}"
 			} else {
-				"/execute in $dim run tp @s ${pos.x} ${pos.y} ${pos.z}"
+				"/execute in $dim run tp @s ${pos.toCommandString()}"
 			}
 
 			val locationText = Component.literal(
 				"\n${home.name}: "
 			).append(
-				Component.literal("$dim [${pos.x}, ${pos.y}, ${pos.z}]")
+				Component.literal("$dim ${pos.toShortString()}")
 					.withStyle { style ->
 						style
 							.withColor(ChatFormatting.GREEN)

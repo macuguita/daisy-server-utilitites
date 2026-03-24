@@ -22,6 +22,7 @@
 
 package com.macuguta.daisy.daisy_home
 
+import com.google.common.reflect.Reflection
 import com.macuguta.daisy.daisy_home.attachments.Homes
 import com.macuguta.daisy.daisy_home.commands.DelHomeCommand
 import com.macuguta.daisy.daisy_home.commands.HomeCommand
@@ -42,6 +43,7 @@ object DaisyHome : ModInitializer {
 
 	override fun onInitialize() {
 		if (!HomeConfig.INSTANCE.isEnabled) return
+		Reflection.initialize(Homes::class.java)
 		CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
 			DelHomeCommand.register(dispatcher)
 			HomeCommand.register(dispatcher)
@@ -51,7 +53,8 @@ object DaisyHome : ModInitializer {
 		}
 	}
 
-	fun String.id(): ResourceLocation = ResourceLocation.fromNamespaceAndPath(MOD_ID, this)
+	val String.id: ResourceLocation
+		get() = ResourceLocation.fromNamespaceAndPath(MOD_ID, this)
 
 	fun suggestHomes(
 		context: CommandContext<CommandSourceStack>,

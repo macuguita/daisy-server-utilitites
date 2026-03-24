@@ -54,7 +54,7 @@ object AddWarpCommand : CommandRegistrator {
 	private fun addWarp(source: CommandSourceStack, player: ServerPlayer, name: String): Int {
 		val warps = DaisyWarps.get(source.server)
 
-		return when (warps.add(name, player.blockPosition(), player.level().dimension())) {
+		return when (warps.add(name, player.position(), player.level().dimension())) {
 			AddWarpResult.SUCCESS -> {
 				source.sendSuccess(
 					{
