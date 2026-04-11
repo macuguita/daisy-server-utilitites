@@ -21,7 +21,7 @@
  */
 
 plugins {
-	id("net.fabricmc.fabric-loom-remap")
+	id("net.fabricmc.fabric-loom")
 	kotlin("jvm")
 	`maven-publish`
 	`java-library`
@@ -82,12 +82,11 @@ fun property(name: String): String = rootProject.providers.gradleProperty(name).
 
 dependencies {
 	minecraft("com.mojang:minecraft:$minecraftVersion")
-	mappings(loom.officialMojangMappings())
-	modImplementation("net.fabricmc:fabric-loader:$loaderVersion")
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")
-	modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
+	implementation("net.fabricmc:fabric-loader:$loaderVersion")
+	implementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")
+	implementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
 
-	modLocalRuntime("com.terraformersmc:modmenu:${property("modmenu_version")}")
+	localRuntime("com.terraformersmc:modmenu:${property("modmenu_version")}")
 
 	compileOnly("org.jspecify:jspecify:1.0.0")
 }
@@ -97,12 +96,12 @@ java {
 }
 
 tasks.withType<JavaCompile>().configureEach {
-	options.release = 21
+	options.release = 25
 }
 
 kotlin {
 	compilerOptions {
-		jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+		jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
 	}
 }
 

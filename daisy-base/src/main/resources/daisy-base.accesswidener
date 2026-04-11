@@ -1,4 +1,4 @@
-accessWidener v2 named
+accessWidener v2 official
 
 #Injected interfaces
 #transitive-inject-interface net/minecraft/world/level/storage/PlayerDataStorage com/macuguita/daisy/daisy_base/duck/CustomPlayerDataStorage

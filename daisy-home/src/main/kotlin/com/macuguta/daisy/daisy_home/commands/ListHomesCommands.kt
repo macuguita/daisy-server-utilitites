@@ -29,6 +29,7 @@ import java.util.*
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.Commands
 import net.minecraft.commands.Commands.argument
 import net.minecraft.commands.Commands.literal
 import net.minecraft.commands.arguments.GameProfileArgument
@@ -57,7 +58,7 @@ object ListHomesCommands : CommandRegistrator {
 
 		dispatcher.register(
 			literal("playerhomes")
-				.requires { it.hasPermission(2) }
+				.requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
 				.then(
 					argument("player", GameProfileArgument.gameProfile())
 						.executes { ctx ->
@@ -97,10 +98,11 @@ object ListHomesCommands : CommandRegistrator {
 		val nbt = server.playerDataStorage.`daisy$getNbt`(uuid)
 
 		val attachments = nbt.getCompound("fabric:attachments")
-		if (!attachments.contains("daisy-home:homes")) return null
+			.flatMap { it.getCompound("daisy-home:homes") }
+		if (attachments.isEmpty()) return null
 
 		return HomeAttachedData.CODEC
-			.parse(NbtOps.INSTANCE, attachments.getCompound("daisy-home:homes"))
+			.parse(NbtOps.INSTANCE, attachments.get())
 			.resultOrPartial { }
 			.map { it.homes }
 			.orElse(null)
@@ -124,7 +126,7 @@ object ListHomesCommands : CommandRegistrator {
 
 		homes.forEach { home ->
 			val pos = home.position
-			val dim = home.dimension.location()
+			val dim = home.dimension.identifier()
 
 			val clickCommand = if (useHomeCommand) {
 				"/home ${home.name}"
@@ -139,10 +141,9 @@ object ListHomesCommands : CommandRegistrator {
 					.withStyle { style ->
 						style
 							.withColor(ChatFormatting.GREEN)
-							.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand))
+							.withClickEvent(ClickEvent.RunCommand(clickCommand))
 							.withHoverEvent(
-								HoverEvent(
-									HoverEvent.Action.SHOW_TEXT,
+								HoverEvent.ShowText(
 									Component.translatable("daisy.tooltip.teleport")
 								)
 							)

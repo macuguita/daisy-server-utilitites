@@ -29,6 +29,7 @@ import net.minecraft.commands.Commands.literal
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.entity.Relative
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
 import com.macuguita.daisy.daisy_tpa.DaisyTpa
@@ -80,7 +81,7 @@ object TpaAcceptCommand : CommandRegistrator {
 	}
 
 	private fun executeTeleport(target: ServerPlayer, req: TpaRequest) {
-		val server = target.server ?: return
+		val server = target.server
 		val requester = server.playerList.getPlayer(req.requester) ?: return
 
 		val targetName = target.gameProfile.name
@@ -90,12 +91,14 @@ object TpaAcceptCommand : CommandRegistrator {
 			TpaType.TO -> {
 				requester.stopRiding()
 				requester.teleportTo(
-					target.serverLevel(),
+					target.level(),
 					target.x,
 					target.y,
 					target.z,
+					emptySet(),
 					target.yRot,
-					target.xRot
+					target.xRot,
+					true
 				)
 
 				target.sendSystemMessage(
@@ -114,13 +117,15 @@ object TpaAcceptCommand : CommandRegistrator {
 
 			TpaType.HERE -> {
 				target.stopRiding()
-				target.teleportTo(
-					requester.serverLevel(),
+				requester.teleportTo(
+					target.level(),
 					requester.x,
 					requester.y,
 					requester.z,
+					emptySet(),
 					requester.yRot,
-					requester.xRot
+					requester.xRot,
+					true
 				)
 
 				target.sendSystemMessage(Component.translatable("daisy.command.tpaacept.feedback.target", target))

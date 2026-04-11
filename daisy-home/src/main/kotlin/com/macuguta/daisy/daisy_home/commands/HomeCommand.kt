@@ -69,7 +69,7 @@ object HomeCommand : CommandRegistrator {
 		val level = server.getLevel(home.dimension)
 			?: return CommandResult.FAILURE.value.also {
 				player.sendSystemMessage(
-					Component.translatable("daisy.command.home.error.level_not_found", home.dimension.location())
+					Component.translatable("daisy.command.home.error.level_not_found", home.dimension.identifier())
 						.withStyle(ChatFormatting.RED)
 				)
 			}
@@ -79,8 +79,10 @@ object HomeCommand : CommandRegistrator {
 			home.position.x,
 			home.position.y,
 			home.position.z,
+			emptySet(),
 			player.yRot,
-			player.xRot
+			player.xRot,
+			true
 		)
 		player.sendSystemMessage(Component.translatable("daisy.command.home.success", name))
 		return CommandResult.SUCCESS.value

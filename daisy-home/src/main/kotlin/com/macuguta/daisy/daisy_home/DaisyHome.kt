@@ -35,7 +35,7 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import net.minecraft.commands.CommandSourceStack
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
@@ -56,8 +56,8 @@ object DaisyHome : ModInitializer {
 		}
 	}
 
-	val String.id: ResourceLocation
-		get() = ResourceLocation.fromNamespaceAndPath(MOD_ID, this)
+	val String.id: Identifier
+		get() = Identifier.fromNamespaceAndPath(MOD_ID, this)
 
 	fun suggestHomes(
 		context: CommandContext<CommandSourceStack>,

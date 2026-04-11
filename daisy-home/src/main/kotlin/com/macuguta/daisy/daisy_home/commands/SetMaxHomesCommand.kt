@@ -26,6 +26,7 @@ import com.macuguta.daisy.daisy_home.attachments.Homes
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.Commands
 import net.minecraft.commands.Commands.argument
 import net.minecraft.commands.Commands.literal
 import net.minecraft.commands.arguments.EntityArgument
@@ -37,7 +38,7 @@ object SetMaxHomesCommand : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
 		dispatcher.register(
 			literal("setmaxhomes")
-				.requires { it.hasPermission(2) }
+				.requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
 				.then(
 					argument("player", EntityArgument.player())
 						.then(

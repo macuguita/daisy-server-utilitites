@@ -22,10 +22,12 @@
 
 package com.macuguita.daisy.daisy_warp.commands
 
+import java.security.Permissions
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.Commands
 import net.minecraft.commands.Commands.argument
 import net.minecraft.commands.Commands.literal
 import net.minecraft.network.chat.Component
@@ -39,7 +41,7 @@ object AddWarpCommand : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
 		dispatcher.register(
 			literal("addwarp")
-				.requires { it.hasPermission(2) }
+				.requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
 				.then(
 					argument("name", StringArgumentType.word())
 						.executes { ctx ->

@@ -68,17 +68,18 @@ object WarpsCommand : CommandRegistrator {
 
 	private fun buildWarpEntry(warp: Warp): MutableComponent {
 		val pos = warp.position
-		val dim = warp.dimension.location()
+		val dim = warp.dimension.identifier()
 
 		return Component.literal("\n${warp.name}: ").append(
 			Component.literal("$dim [${pos.x}, ${pos.y}, ${pos.z}]")
 				.withStyle { style ->
 					style
 						.withColor(ChatFormatting.GREEN)
-						.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp ${warp.name}"))
+						.withClickEvent(
+							ClickEvent.RunCommand("/warp ${warp.name}")
+						)
 						.withHoverEvent(
-							HoverEvent(
-								HoverEvent.Action.SHOW_TEXT,
+							HoverEvent.ShowText(
 								Component.translatable("daisy.tooltip.teleport", warp.name)
 							)
 						)

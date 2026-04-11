@@ -46,22 +46,19 @@ subprojects.forEach { sub ->
 			"api", project(
 				mapOf(
 					"path" to sub.path,
-					"configuration" to "namedElements"
+//					"configuration" to "namedElements"
 				)
 			)
 		)
 	}
 }
 
-tasks.remapJar {
+val nestedJars by configurations.creating
+nestedJars.setTransitive(false)
+
+dependencies {
 	subprojects.forEach { sub ->
-		val subRemapJar = sub.tasks.remapJar
-
-		dependsOn(subRemapJar)
-
-		nestedJars.from(
-			subRemapJar.flatMap { it.archiveFile }
-		)
+		nestedJars(project("${sub.path}"))
 	}
 }
 

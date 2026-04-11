@@ -59,7 +59,7 @@ kotlin {
 
 dependencies {
 	// https://maven.fabricmc.net/net/fabricmc/fabric-loom/
-	implementation("net.fabricmc:fabric-loom:1.15.+")
+	implementation("net.fabricmc:fabric-loom:1.16.+")
 	// https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-gradle-plugin
 	implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.10")
 }

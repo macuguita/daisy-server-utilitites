@@ -26,15 +26,15 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 
 data class Home(val name: String, val position: Vec3, val dimension: ResourceKey<Level>) {
 	companion object {
-		private val LEVEL_CODEC = ResourceLocation.CODEC.xmap(
+		private val LEVEL_CODEC = Identifier.CODEC.xmap(
 			{ rl -> ResourceKey.create(Registries.DIMENSION, rl) },
-			ResourceKey<Level>::location
+			ResourceKey<Level>::identifier
 		)
 
 		val CODEC: Codec<Home> = RecordCodecBuilder.create { i ->

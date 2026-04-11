@@ -24,9 +24,13 @@ plugins {
 	id("macuguita-minecraft")
 }
 
+loom {
+	accessWidenerPath.set(project.file("src/main/resources/daisy-tpa.accesswidener"))
+}
+
 dependencies {
-	api(project(mapOf("path" to ":daisy-base", "configuration" to "namedElements")))
-	modImplementation(
+	api(project(mapOf("path" to ":daisy-base")))
+	implementation(
 		"xyz.nucleoid:server-translations-api:${
 			providers.gradleProperty("server_translations_api_version").get()
 		}"
