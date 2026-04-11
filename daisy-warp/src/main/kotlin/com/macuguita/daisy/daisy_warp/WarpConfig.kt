@@ -22,17 +22,11 @@
 
 package com.macuguita.daisy.daisy_warp
 
-import com.macuguita.daisy.daisy_base.config.ModuleConfig
+import folk.sisby.kaleido.api.WrappedConfig
+import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment
 
-class WarpConfig : ModuleConfig("daisy/warp.properties") {
+class WarpConfig : WrappedConfig() {
+	@Comment("Whether the module should be enabled.")
+	var isEnabled: Boolean = true
 	var allowSpawnCommand: Boolean = true
-		private set
-
-	override fun configure() {
-		allowSpawnCommand = boolean("allowSpawnCommand", true)
-	}
-
-	companion object {
-		val INSTANCE = WarpConfig().also { it.load() }
-	}
 }

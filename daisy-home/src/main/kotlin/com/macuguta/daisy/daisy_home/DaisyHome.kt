@@ -29,6 +29,7 @@ import com.macuguta.daisy.daisy_home.commands.HomeCommand
 import com.macuguta.daisy.daisy_home.commands.ListHomesCommands
 import com.macuguta.daisy.daisy_home.commands.SetHomeCommand
 import com.macuguta.daisy.daisy_home.commands.SetMaxHomesCommand
+import folk.sisby.kaleido.api.WrappedConfig
 import java.util.concurrent.CompletableFuture
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
@@ -37,12 +38,14 @@ import net.minecraft.commands.CommandSourceStack
 import net.minecraft.resources.ResourceLocation
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.loader.api.FabricLoader
 
 object DaisyHome : ModInitializer {
 	private val MOD_ID = "daisy-home"
+	val CONFIG = WrappedConfig.createToml(FabricLoader.getInstance().configDir, "daisy", MOD_ID, HomeConfig::class.java)
 
 	override fun onInitialize() {
-		if (!HomeConfig.INSTANCE.isEnabled) return
+		if (!CONFIG.isEnabled) return
 		Reflection.initialize(Homes::class.java)
 		CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
 			DelHomeCommand.register(dispatcher)

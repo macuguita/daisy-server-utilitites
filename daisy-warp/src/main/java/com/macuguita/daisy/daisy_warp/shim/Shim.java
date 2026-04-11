@@ -22,15 +22,14 @@
 
 package com.macuguita.daisy.daisy_warp.shim;
 
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
+import org.jspecify.annotations.Nullable;
+
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
-
-import org.jspecify.annotations.Nullable;
-
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
 public class Shim {
 

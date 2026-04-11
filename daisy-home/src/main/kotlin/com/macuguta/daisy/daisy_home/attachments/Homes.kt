@@ -24,8 +24,8 @@
 
 package com.macuguta.daisy.daisy_home.attachments
 
+import com.macuguta.daisy.daisy_home.DaisyHome
 import com.macuguta.daisy.daisy_home.DaisyHome.id
-import com.macuguta.daisy.daisy_home.HomeConfig
 import com.macuguta.daisy.daisy_home.data.AddHomeResult
 import com.macuguta.daisy.daisy_home.data.Home
 import com.macuguta.daisy.daisy_home.data.RemoveHomeResult
@@ -45,7 +45,7 @@ object Homes {
 			"homes".id
 		) { builder ->
 			builder
-				.initializer { HomeAttachedData(emptyList(), HomeConfig.INSTANCE.maxDefaultHomes) }
+				.initializer { HomeAttachedData(emptyList(), DaisyHome.CONFIG.maxDefaultHomes) }
 				.persistent(HomeAttachedData.CODEC)
 				.copyOnDeath()
 		}
@@ -55,7 +55,7 @@ object Homes {
 
 data class HomeAttachedData(
 	val homes: List<Home>,
-	val maxHomes: Int = HomeConfig.INSTANCE.maxDefaultHomes,
+	val maxHomes: Int = DaisyHome.CONFIG.maxDefaultHomes,
 ) {
 	companion object {
 		val CODEC: Codec<HomeAttachedData> =
@@ -65,7 +65,7 @@ data class HomeAttachedData(
 						.optionalFieldOf("homes", emptyList())
 						.forGetter { it.homes },
 					Codec.INT
-						.optionalFieldOf("max_homes", HomeConfig.INSTANCE.maxDefaultHomes)
+						.optionalFieldOf("max_homes", DaisyHome.CONFIG.maxDefaultHomes)
 						.forGetter { it.maxHomes }
 				).apply(i, ::HomeAttachedData)
 			}
@@ -88,7 +88,7 @@ data class HomeAttachedData(
 data class HomeData(private val target: AttachmentTarget) {
 
 	private fun current(): HomeAttachedData =
-		target.getAttachedOrElse(Homes.ATTACHMENT, HomeAttachedData(emptyList(), HomeConfig.INSTANCE.maxDefaultHomes))
+		target.getAttachedOrElse(Homes.ATTACHMENT, HomeAttachedData(emptyList(), DaisyHome.CONFIG.maxDefaultHomes))
 
 	val homes: List<Home> get() = current().homes
 

@@ -117,8 +117,10 @@ object PlayerPosCommand : CommandRegistrator {
 
 	fun getOnlinePlayerLevel(server: MinecraftServer, uuid: UUID): String {
 		val player = server.playerList.getPlayer(uuid)
-		return if (player == null) getOfflinePlayerLevel(server, uuid) else player.level().dimension().location()
-			.toString()
+		return if (player != null) player.level().dimension().location().toString() else getOfflinePlayerLevel(
+			server,
+			uuid
+		)
 	}
 
 	fun getOfflinePlayerLevel(server: MinecraftServer, uuid: UUID): String {

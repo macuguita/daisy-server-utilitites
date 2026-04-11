@@ -22,15 +22,22 @@
 
 package com.macuguita.daisy.daisy_player_management
 
+import folk.sisby.kaleido.api.WrappedConfig
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.loader.api.FabricLoader
+import com.macuguita.daisy.daisy_player_management.commands.OfflineTpCommand
 import com.macuguita.daisy.daisy_player_management.commands.PlayerPosCommand
 
 object DaisyPlayerManagement : ModInitializer {
 
+	private val MOD_ID = "daisy-player-management"
+	val CONFIG = WrappedConfig.createToml(FabricLoader.getInstance().configDir, "daisy", MOD_ID, PlayerManagementConfig::class.java)
+
 	override fun onInitialize() {
-		if (!PlayerManagementConfig.INSTANCE.isEnabled) return
+		if (!CONFIG.isEnabled) return
 		CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+			OfflineTpCommand.register(dispatcher)
 			PlayerPosCommand.register(dispatcher)
 		}
 	}

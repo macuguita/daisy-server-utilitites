@@ -23,7 +23,6 @@
 package com.macuguita.daisy.daisy_warp.saveddata
 
 import java.util.*
-import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.NbtOps
@@ -32,7 +31,6 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.saveddata.SavedData
 import net.minecraft.world.phys.Vec3
-import net.fabricmc.loader.impl.lib.sat4j.core.Vec
 import com.macuguita.daisy.daisy_warp.data.AddWarpResult
 import com.macuguita.daisy.daisy_warp.data.RemoveWarpResult
 import com.macuguita.daisy.daisy_warp.data.Warp

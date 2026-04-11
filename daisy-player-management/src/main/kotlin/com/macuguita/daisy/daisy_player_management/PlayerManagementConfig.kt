@@ -22,13 +22,10 @@
 
 package com.macuguita.daisy.daisy_player_management;
 
-import com.macuguita.daisy.daisy_base.config.ModuleConfig
+import folk.sisby.kaleido.api.WrappedConfig
+import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment
 
-class PlayerManagementConfig : ModuleConfig("daisy/player_management.properties"){
-	override fun configure() {
-	}
-
-	companion object {
-		val INSTANCE = PlayerManagementConfig().also { it.load() }
-	}
+class PlayerManagementConfig : WrappedConfig() {
+	@Comment("Whether the module should be enabled.")
+	var isEnabled: Boolean = true
 }

@@ -28,4 +28,4 @@ fun Vec3.toShortString(): String =
 	"[${this.x.toInt()}, ${this.y.toInt()}, ${this.z.toInt()}]"
 
 fun Vec3.toCommandString(): String =
-	"${this.x}, ${this.y}, ${this.z}"
+	"${this.x} ${this.y} ${this.z}"

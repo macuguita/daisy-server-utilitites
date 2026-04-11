@@ -22,20 +22,12 @@
 
 package com.macuguita.daisy.daisy_tpa
 
-import com.macuguita.daisy.daisy_base.config.ModuleConfig
+import folk.sisby.kaleido.api.WrappedConfig
+import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment
 
-class TpaConfig : ModuleConfig("daisy/tpa.properties") {
+class TpaConfig : WrappedConfig() {
+	@Comment("Whether the module should be enabled.")
+	var isEnabled: Boolean = true
 	var requestExpiryMs: Int = 60_000
-		private set
 	var maxPendingRequests: Int = 3
-		private set
-
-	override fun configure() {
-		requestExpiryMs = int("requestExpiryMs", 60_000)
-		maxPendingRequests = int("maxPendingRequests", 3)
-	}
-
-	companion object {
-		val INSTANCE = TpaConfig().also { it.load() }
-	}
 }

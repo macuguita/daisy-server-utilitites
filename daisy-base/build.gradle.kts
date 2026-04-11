@@ -27,3 +27,7 @@ plugins {
 loom {
 	accessWidenerPath.set(project.file("src/main/resources/daisy-base.accesswidener"))
 }
+
+dependencies {
+	modApi("folk.sisby:kaleido-config:${providers.gradleProperty("kaleido_config_version").get()}")
+}

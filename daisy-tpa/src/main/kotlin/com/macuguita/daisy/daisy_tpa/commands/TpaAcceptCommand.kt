@@ -31,7 +31,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
-import com.macuguita.daisy.daisy_tpa.TpaConfig
+import com.macuguita.daisy.daisy_tpa.DaisyTpa
 import com.macuguita.daisy.daisy_tpa.data.TpaManager
 import com.macuguita.daisy.daisy_tpa.data.TpaRequest
 import com.macuguita.daisy.daisy_tpa.data.TpaType
@@ -44,7 +44,7 @@ object TpaAcceptCommand : CommandRegistrator {
 					val player = ctx.source.playerOrException
 					val req = TpaManager.popMostRecent(
 						player.uuid,
-						TpaConfig.INSTANCE.requestExpiryMs
+						DaisyTpa.CONFIG.requestExpiryMs
 					) ?: run {
 						ctx.source.sendFailure(Component.translatable("daisy.command.tpaacept.error.no_requests"))
 						return@executes CommandResult.FAILURE.value
@@ -61,7 +61,7 @@ object TpaAcceptCommand : CommandRegistrator {
 
 							val req = TpaManager.popFromRequester(
 								player.uuid, requester.uuid,
-								TpaConfig.INSTANCE.requestExpiryMs
+								DaisyTpa.CONFIG.requestExpiryMs
 							) ?: run {
 								ctx.source.sendFailure(
 									Component.translatable(

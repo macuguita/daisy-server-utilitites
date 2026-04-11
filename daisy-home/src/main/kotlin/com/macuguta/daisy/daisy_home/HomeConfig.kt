@@ -22,17 +22,11 @@
 
 package com.macuguta.daisy.daisy_home
 
-import com.macuguita.daisy.daisy_base.config.ModuleConfig
+import folk.sisby.kaleido.api.WrappedConfig
+import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment
 
-class HomeConfig : ModuleConfig("daisy/home.properties") {
+class HomeConfig : WrappedConfig() {
+	@Comment("Whether the module should be enabled.")
+	var isEnabled: Boolean = true
 	var maxDefaultHomes: Int = 3
-		private set
-
-	override fun configure() {
-		maxDefaultHomes = int("maxDefaultHomes", 3)
-	}
-
-	companion object {
-		val INSTANCE = HomeConfig().also { it.load() }
-	}
 }

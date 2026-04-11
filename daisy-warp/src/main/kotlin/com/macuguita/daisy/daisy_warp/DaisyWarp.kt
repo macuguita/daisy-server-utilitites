@@ -22,8 +22,10 @@
 
 package com.macuguita.daisy.daisy_warp
 
+import folk.sisby.kaleido.api.WrappedConfig
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.loader.api.FabricLoader
 import com.macuguita.daisy.daisy_warp.commands.AddWarpCommand
 import com.macuguita.daisy.daisy_warp.commands.DelWarpCommand
 import com.macuguita.daisy.daisy_warp.commands.SpawnCommand
@@ -31,12 +33,16 @@ import com.macuguita.daisy.daisy_warp.commands.WarpCommand
 import com.macuguita.daisy.daisy_warp.commands.WarpsCommand
 
 object DaisyWarp : ModInitializer {
+
+	private val MOD_ID = "daisy-warp"
+	val CONFIG = WrappedConfig.createToml(FabricLoader.getInstance().configDir, "daisy", MOD_ID, WarpConfig::class.java)
+
 	override fun onInitialize() {
-		if (!WarpConfig.INSTANCE.isEnabled) return
+		if (!CONFIG.isEnabled) return
 		CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
 			AddWarpCommand.register(dispatcher)
 			DelWarpCommand.register(dispatcher)
-			if (WarpConfig.INSTANCE.allowSpawnCommand) {
+			if (CONFIG.allowSpawnCommand) {
 				SpawnCommand.register(dispatcher)
 			}
 			WarpCommand.register(dispatcher)

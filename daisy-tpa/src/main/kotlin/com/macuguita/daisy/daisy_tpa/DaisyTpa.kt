@@ -22,6 +22,7 @@
 
 package com.macuguita.daisy.daisy_tpa
 
+import folk.sisby.kaleido.api.WrappedConfig
 import org.slf4j.LoggerFactory
 import com.mojang.brigadier.context.CommandContext
 import net.minecraft.ChatFormatting
@@ -33,6 +34,7 @@ import net.minecraft.network.chat.HoverEvent
 import net.minecraft.server.level.ServerPlayer
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.loader.api.FabricLoader
 import com.macuguita.daisy.daisy_base.commands.CommandResult
 import com.macuguita.daisy.daisy_tpa.commands.TpaAcceptCommand
 import com.macuguita.daisy.daisy_tpa.commands.TpaCommand
@@ -42,11 +44,13 @@ import com.macuguita.daisy.daisy_tpa.data.TpaRequest
 import com.macuguita.daisy.daisy_tpa.data.TpaType
 
 object DaisyTpa : ModInitializer {
+
 	private val MOD_ID = "daisy-tpa"
 	private val LOGGER = LoggerFactory.getLogger(MOD_ID)
+	val CONFIG = WrappedConfig.createToml(FabricLoader.getInstance().configDir, "daisy", MOD_ID, TpaConfig::class.java)
 
 	override fun onInitialize() {
-		if (!TpaConfig.INSTANCE.isEnabled) return
+		if (!CONFIG.isEnabled) return
 		CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
 			TpaCommand.register(dispatcher)
 			TpaHereCommand.register(dispatcher)
@@ -73,7 +77,7 @@ object DaisyTpa : ModInitializer {
 				type = type,
 				timestamp = System.currentTimeMillis()
 			),
-			TpaConfig.INSTANCE.requestExpiryMs
+			CONFIG.requestExpiryMs
 		)
 
 		if (!success) {
@@ -107,19 +111,21 @@ object DaisyTpa : ModInitializer {
 	}
 
 	private fun acceptButton(senderName: String): Component =
-		Component.translatable("daisy.command.accept_button").withStyle {
-			it.withClickEvent(
-				ClickEvent(
-					ClickEvent.Action.RUN_COMMAND,
-					"/tpaaccept $senderName"
-				)
-			)
-				.withColor(ChatFormatting.GREEN)
-				.withHoverEvent(
-					HoverEvent(
-						HoverEvent.Action.SHOW_TEXT,
-						Component.translatable("daisy.tooltip.accept_teleport")
+		Component.literal(" ")
+			.append(Component.translatable("daisy.command.accept_button").withStyle {
+				it.withClickEvent(
+					ClickEvent(
+						ClickEvent.Action.RUN_COMMAND,
+						"/tpaaccept $senderName"
 					)
 				)
-		}
+					.withColor(ChatFormatting.GREEN)
+					.withHoverEvent(
+						HoverEvent(
+							HoverEvent.Action.SHOW_TEXT,
+							Component.translatable("daisy.tooltip.accept_teleport")
+						)
+					)
+			})
+
 }
