@@ -46,7 +46,6 @@ subprojects.forEach { sub ->
 			"api", project(
 				mapOf(
 					"path" to sub.path,
-//					"configuration" to "namedElements"
 				)
 			)
 		)
@@ -61,6 +60,8 @@ dependencies {
 		nestedJars(project("${sub.path}"))
 	}
 }
+
+loom.nestJars(tasks.jar, nestedJars)
 
 tasks.jar {
 	from(rootProject.file("LICENSE")) {
