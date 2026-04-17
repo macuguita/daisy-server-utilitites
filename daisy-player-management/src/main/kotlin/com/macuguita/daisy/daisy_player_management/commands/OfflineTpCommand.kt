@@ -61,7 +61,7 @@ object OfflineTpCommand : CommandRegistrator {
 											"Pos",
 											newDoubleList(pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble())
 										)
-										it.putString("Dimension", ctx.source.level.dimension().toString())
+										it.putString("Dimension", ctx.source.level.dimension().identifier().toString())
 									}
 
 									ctx.source.sendSuccess(

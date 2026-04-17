@@ -33,6 +33,9 @@ loom {
 		register("rootClient") {
 			client()
 		}
+		register("rootServer") {
+			server()
+		}
 	}
 }
 
