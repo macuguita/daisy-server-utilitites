@@ -20,17 +20,17 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-plugins {
-	id("macuguita-minecraft")
-}
+package com.macuguita.daisy.daisy_player_management.mixin;
 
-dependencies {
-	api(project(mapOf("path" to ":daisy-base")))
-	implementation(
-		"xyz.nucleoid:server-translations-api:${
-			providers.gradleProperty("server_translations_api_version").get()
-		}"
-	)
-	implementation("eu.pb4:sgui:${providers.gradleProperty("sgui_version").get()}")
-	include("eu.pb4:sgui:${providers.gradleProperty("sgui_version").get()}")
+import net.minecraft.server.MinecraftServer;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
+
+@Mixin(ServerPlayer.class)
+public interface ServerPlayerAccessor {
+	@Accessor("server")
+	MinecraftServer daisy$getServer();
 }

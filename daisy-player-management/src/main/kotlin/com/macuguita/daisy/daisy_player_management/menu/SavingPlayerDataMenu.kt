@@ -20,17 +20,16 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-plugins {
-	id("macuguita-minecraft")
-}
+package com.macuguita.daisy.daisy_player_management.menu
 
-dependencies {
-	api(project(mapOf("path" to ":daisy-base")))
-	implementation(
-		"xyz.nucleoid:server-translations-api:${
-			providers.gradleProperty("server_translations_api_version").get()
-		}"
-	)
-	implementation("eu.pb4:sgui:${providers.gradleProperty("sgui_version").get()}")
-	include("eu.pb4:sgui:${providers.gradleProperty("sgui_version").get()}")
+import eu.pb4.sgui.api.gui.SimpleGui
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.inventory.MenuType
+import com.macuguita.daisy.daisy_player_management.DaisyPlayerManagement
+
+class SavingPlayerDataMenu(type: MenuType<*>, player: ServerPlayer, val savedPlayer: ServerPlayer): SimpleGui(type, player, false) {
+	override fun onRemoved() {
+		super.onRemoved()
+		DaisyPlayerManagement.savePlayerData(savedPlayer)
+	}
 }

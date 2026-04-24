@@ -35,31 +35,38 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
+import com.macuguita.daisy.daisy_base.commands.command
+import com.macuguita.daisy.daisy_base.commands.string
 
 object HomeCommand : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
-		dispatcher.register(
-			literal("home")
-				.then(
-					argument("name", StringArgumentType.word())
-						.suggests { context, builder -> DaisyHome.suggestHomes(context, builder) }
-						.executes { ctx ->
-							val player = ctx.source.playerOrException
-							val name = StringArgumentType.getString(ctx, "name")
-							teleportToHome(player, ctx.source.server, name)
-						}
-				)
-				.executes { ctx ->
-					val player = ctx.source.playerOrException
-					teleportToHome(player, ctx.source.server, "home")
+		dispatcher.command("home") {
+
+			executes {
+				teleportToHome(source.playerOrException, source.server, "home")
+			}
+
+			argument("name", StringArgumentType.word()) {
+
+				suggests(DaisyHome::suggestHomes)
+
+				executes {
+					teleportToHome(source.playerOrException, source.server, string("name"))
 				}
-		)
+			}
+		}
 	}
 
-	private fun teleportToHome(player: ServerPlayer, server: MinecraftServer, name: String): Int {
+	private fun teleportToHome(
+		player: ServerPlayer,
+		server: MinecraftServer,
+		name: String
+	): CommandResult {
+
 		val homeData = Homes.get(player)
+
 		val home = homeData.homes.find { it.name == name.lowercase() }
-			?: return CommandResult.FAILURE.value.also {
+			?: return CommandResult.FAILURE.also {
 				player.sendSystemMessage(
 					Component.translatable("daisy.command.home.error.not_found", name)
 						.withStyle(ChatFormatting.RED)
@@ -67,10 +74,12 @@ object HomeCommand : CommandRegistrator {
 			}
 
 		val level = server.getLevel(home.dimension)
-			?: return CommandResult.FAILURE.value.also {
+			?: return CommandResult.FAILURE.also {
 				player.sendSystemMessage(
-					Component.translatable("daisy.command.home.error.level_not_found", home.dimension.identifier())
-						.withStyle(ChatFormatting.RED)
+					Component.translatable(
+						"daisy.command.home.error.level_not_found",
+						home.dimension.identifier()
+					).withStyle(ChatFormatting.RED)
 				)
 			}
 
@@ -84,7 +93,11 @@ object HomeCommand : CommandRegistrator {
 			player.xRot,
 			true
 		)
-		player.sendSystemMessage(Component.translatable("daisy.command.home.success", name))
-		return CommandResult.SUCCESS.value
+
+		player.sendSystemMessage(
+			Component.translatable("daisy.command.home.success", name)
+		)
+
+		return CommandResult.SUCCESS
 	}
 }

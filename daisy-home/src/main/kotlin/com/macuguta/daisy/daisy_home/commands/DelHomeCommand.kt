@@ -35,30 +35,29 @@ import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
+import com.macuguita.daisy.daisy_base.commands.command
+import com.macuguita.daisy.daisy_base.commands.string
 
 object DelHomeCommand : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
-		dispatcher.register(
-			literal("delhome")
-				.then(
-					argument("name", StringArgumentType.word())
-						.suggests { context, builder -> DaisyHome.suggestHomes(context, builder) }
-						.executes { ctx ->
-							val player = ctx.source.playerOrException
-							val name = StringArgumentType.getString(ctx, "name")
-							deleteHome(player, name)
-						}
-				)
-		)
+		dispatcher.command("delhome") {
+			argument("name", StringArgumentType.word()) {
+				suggests(DaisyHome::suggestHomes)
+
+				executes {
+					deleteHome(source.playerOrException, string("name"))
+				}
+			}
+		}
 	}
 
-	private fun deleteHome(player: ServerPlayer, name: String): Int {
+	private fun deleteHome(player: ServerPlayer, name: String): CommandResult {
 		val homeData = Homes.get(player)
 
 		return when (homeData.removeHome(name)) {
 			RemoveHomeResult.SUCCESS -> {
 				player.sendSystemMessage(Component.translatable("daisy.command.delhome.success", name))
-				CommandResult.SUCCESS.value
+				CommandResult.SUCCESS
 			}
 
 			RemoveHomeResult.NOT_FOUND -> {
@@ -66,7 +65,7 @@ object DelHomeCommand : CommandRegistrator {
 					Component.translatable("daisy.command.delhome.error.not_found", name)
 						.withStyle(ChatFormatting.RED)
 				)
-				CommandResult.FAILURE.value
+				CommandResult.FAILURE
 			}
 		}
 	}

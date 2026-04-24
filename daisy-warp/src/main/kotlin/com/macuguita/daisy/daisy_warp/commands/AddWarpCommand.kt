@@ -22,7 +22,6 @@
 
 package com.macuguita.daisy.daisy_warp.commands
 
-import java.security.Permissions
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.ChatFormatting

@@ -14,6 +14,9 @@
   "license": "MIT",
   "icon": "assets/daisy-player-management/icon.png",
   "environment": "*",
+  "mixins": [
+    "daisy-player-management.mixins.json"
+  ],
   "entrypoints": {
     "main": [
       {

@@ -41,57 +41,57 @@ import net.minecraft.network.chat.MutableComponent
 import net.minecraft.server.MinecraftServer
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
+import com.macuguita.daisy.daisy_base.commands.command
+import com.macuguita.daisy.daisy_base.commands.gameProfile
 import com.macuguita.daisy.daisy_base.toCommandString
 import com.macuguita.daisy.daisy_base.toShortString
 
 object ListHomesCommands : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
 
-		dispatcher.register(
-			literal("homes")
-				.executes { ctx ->
-					val player = ctx.source.playerOrException
-					val homes = Homes.get(player).homes
-					sendHomeList(ctx.source, player.name.string, homes, useHomeCommand = true)
+		dispatcher.command("homes") {
+			executes {
+				val player = source.playerOrException
+				sendHomeList(source, player.name.string, Homes.get(player).homes, useHomeCommand = true)
+			}
+		}
+
+		dispatcher.command("playerhomes") {
+			requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
+
+			argument("player", GameProfileArgument.gameProfile()) {
+				executes {
+					val profiles = gameProfile("player")
+
+					if (profiles.size != 1) {
+						source.sendFailure(
+							Component.translatable("daisy.command.playerhomes.error.one_player")
+								.withStyle(ChatFormatting.RED)
+						)
+						return@executes CommandResult.FAILURE
+					}
+
+					val profile = profiles.first()
+					val server = source.server
+					val onlinePlayer = server.playerList.getPlayer(profile.id)
+					val homes = if (onlinePlayer != null) {
+						Homes.get(onlinePlayer).homes
+					} else {
+						getOfflineHomes(server, profile.id)
+					}
+
+					if (homes == null) {
+						source.sendFailure(
+							Component.translatable("daisy.command.playerhomes.error.no_homes_found", profile.name)
+								.withStyle(ChatFormatting.RED)
+						)
+						return@executes CommandResult.FAILURE
+					}
+
+					sendHomeList(source, profile.name, homes, useHomeCommand = false)
 				}
-		)
-
-		dispatcher.register(
-			literal("playerhomes")
-				.requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
-				.then(
-					argument("player", GameProfileArgument.gameProfile())
-						.executes { ctx ->
-							val profiles = GameProfileArgument.getGameProfiles(ctx, "player")
-							if (profiles.size != 1) {
-								ctx.source.sendFailure(
-									Component.translatable("daisy.command.playerhomes.error.one_player")
-										.withStyle(ChatFormatting.RED)
-								)
-								return@executes CommandResult.FAILURE.value
-							}
-
-							val profile = profiles.first()
-							val server = ctx.source.server
-							val onlinePlayer = server.playerList.getPlayer(profile.id)
-							val homes = if (onlinePlayer != null) {
-								Homes.get(onlinePlayer).homes
-							} else {
-								getOfflineHomes(server, profile.id)
-							}
-
-							if (homes == null) {
-								ctx.source.sendFailure(
-									Component.translatable("daisy.command.playerhomes.error.no_homes_found", profile.name)
-										.withStyle(ChatFormatting.RED)
-								)
-								return@executes CommandResult.FAILURE.value
-							}
-
-							sendHomeList(ctx.source, profile.name, homes, useHomeCommand = false)
-						}
-				)
-		)
+			}
+		}
 	}
 
 	private fun getOfflineHomes(server: MinecraftServer, uuid: UUID): List<Home>? {
@@ -113,13 +113,13 @@ object ListHomesCommands : CommandRegistrator {
 		playerName: String,
 		homes: List<Home>,
 		useHomeCommand: Boolean,
-	): Int {
+	): CommandResult {
 		if (homes.isEmpty()) {
 			source.sendFailure(
 				Component.translatable("daisy.command.homes.error.no_homes", playerName)
 					.withStyle(ChatFormatting.RED)
 			)
-			return CommandResult.FAILURE.value
+			return CommandResult.FAILURE
 		}
 
 		val text: MutableComponent = Component.translatable("daisy.command.homes.feedback.1", playerName)
@@ -154,6 +154,6 @@ object ListHomesCommands : CommandRegistrator {
 		}
 
 		source.sendSuccess({ text }, false)
-		return CommandResult.SUCCESS.value
+		return CommandResult.SUCCESS
 	}
 }
