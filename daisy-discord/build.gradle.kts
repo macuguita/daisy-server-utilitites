@@ -25,15 +25,11 @@ plugins {
 }
 
 repositories {
-	exclusiveContent {
-		forRepository {
-			maven {
-				name = "Kord"
-				url = uri("https://snapshots.kord.dev")
-			}
-		}
-		filter {
-//			includeGroupAndSubgroups("dev.kord")
+	maven {
+		name = "Kord"
+		url = uri("https://snapshots.kord.dev")
+		content {
+			includeGroup("dev.kord")
 		}
 	}
 }
