@@ -20,13 +20,20 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguta.daisy.daisy_home
+package com.macuguita.daisy.daisy_discord
 
 import folk.sisby.kaleido.api.WrappedConfig
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment
 
-class HomeConfig : WrappedConfig() {
+class DiscordConfig : WrappedConfig() {
 	@Comment("Whether the module should be enabled.")
-	var isEnabled: Boolean = true
-	var maxDefaultHomes: Int = 3
+	var isEnabled: Boolean = false
+	var botToken: String = "PLACE_TOKEN_HERE"
+	var channelId: String = "PLACE_CHANNEL_ID_HERE"
+	var playerJoinMessage: String = "%username% joined the server"
+	var playerLeaveMessage: String = "%username% left the server"
+	var serverStartedMessage: String = "Server started."
+	var serverStoppingMessage: String = "Server stopping..."
+	var discordMessageFormat: String = "<%username%> %messageContent%"
+	var colorUsernamesBasedOnRole: Boolean = true
 }

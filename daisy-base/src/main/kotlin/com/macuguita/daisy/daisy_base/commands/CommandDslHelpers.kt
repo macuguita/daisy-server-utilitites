@@ -28,7 +28,6 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import net.minecraft.commands.CommandSourceStack
-import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.commands.arguments.GameProfileArgument
 import net.minecraft.server.level.ServerPlayer
@@ -48,7 +47,7 @@ fun CommandContext<CommandSourceStack>.gameProfile(name: String): Collection<Nam
 
 fun CommandDispatcher<CommandSourceStack>.command(
 	name: String,
-	block: CommandBuilder<CommandSourceStack>.() -> Unit
+	block: CommandBuilder<CommandSourceStack>.() -> Unit,
 ) {
 	val root = LiteralArgumentBuilder.literal<CommandSourceStack>(name)
 	val builder = CommandBuilder(root)

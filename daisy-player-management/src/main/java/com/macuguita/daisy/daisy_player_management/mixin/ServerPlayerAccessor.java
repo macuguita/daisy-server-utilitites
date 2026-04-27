@@ -22,12 +22,11 @@
 
 package com.macuguita.daisy.daisy_player_management.mixin;
 
-import net.minecraft.server.MinecraftServer;
-
-import net.minecraft.server.level.ServerPlayer;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
+
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 
 @Mixin(ServerPlayer.class)
 public interface ServerPlayerAccessor {

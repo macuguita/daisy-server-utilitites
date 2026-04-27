@@ -25,9 +25,6 @@ package com.macuguita.daisy.daisy_warp.saveddata
 import java.util.*
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import net.minecraft.core.HolderLookup
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.NbtOps
 import net.minecraft.resources.ResourceKey
 import net.minecraft.server.MinecraftServer
 import net.minecraft.world.level.Level
@@ -44,7 +41,7 @@ class DaisyWarps() : SavedData() {
 	var _warps: MutableList<Warp> = mutableListOf()
 
 	init {
-	    this.setDirty()
+		this.setDirty()
 	}
 
 	private constructor(warps: MutableList<Warp>) : this() {
@@ -75,7 +72,7 @@ class DaisyWarps() : SavedData() {
 
 	companion object {
 		val DATA_NAME = "warps".id
-		val CODEC: Codec<DaisyWarps> = RecordCodecBuilder.create{ i ->
+		val CODEC: Codec<DaisyWarps> = RecordCodecBuilder.create { i ->
 			i.group(
 				Warp.CODEC.listOf().fieldOf("warps").forGetter { w -> w._warps }
 			).apply(i, ::DaisyWarps)

@@ -27,7 +27,8 @@ import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.inventory.MenuType
 import com.macuguita.daisy.daisy_player_management.DaisyPlayerManagement
 
-class SavingPlayerDataMenu(type: MenuType<*>, player: ServerPlayer, val savedPlayer: ServerPlayer): SimpleGui(type, player, false) {
+class SavingPlayerDataMenu(type: MenuType<*>, player: ServerPlayer, val savedPlayer: ServerPlayer) :
+	SimpleGui(type, player, false) {
 	override fun onRemoved() {
 		super.onRemoved()
 		DaisyPlayerManagement.savePlayerData(savedPlayer)

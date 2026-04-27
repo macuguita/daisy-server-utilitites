@@ -1,17 +1,15 @@
 package com.macuguita.daisy.daisy_base.commands
 
 import java.util.function.Predicate
-import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
-import net.minecraft.commands.CommandSourceStack
 
 class CommandBuilder<S>(
-	private val node: ArgumentBuilder<S, *>
+	private val node: ArgumentBuilder<S, *>,
 ) {
 
 	fun requires(predicate: Predicate<S>) {
@@ -40,7 +38,7 @@ class CommandBuilder<S>(
 	fun <T> argument(
 		name: String,
 		type: ArgumentType<T>,
-		block: CommandBuilder<S>.() -> Unit
+		block: CommandBuilder<S>.() -> Unit,
 	) {
 		val argNode = RequiredArgumentBuilder.argument<S, T>(name, type)
 		val builder = CommandBuilder<S>(argNode)

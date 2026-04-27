@@ -20,18 +20,13 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguta.daisy.daisy_home.commands
+package com.macuguita.daisy.daisy_home.commands
 
-import com.macuguta.daisy.daisy_home.attachments.HomeAttachedData
-import com.macuguta.daisy.daisy_home.attachments.Homes
-import com.macuguta.daisy.daisy_home.data.Home
 import java.util.*
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
-import net.minecraft.commands.Commands.argument
-import net.minecraft.commands.Commands.literal
 import net.minecraft.commands.arguments.GameProfileArgument
 import net.minecraft.nbt.NbtOps
 import net.minecraft.network.chat.ClickEvent
@@ -45,6 +40,9 @@ import com.macuguita.daisy.daisy_base.commands.command
 import com.macuguita.daisy.daisy_base.commands.gameProfile
 import com.macuguita.daisy.daisy_base.toCommandString
 import com.macuguita.daisy.daisy_base.toShortString
+import com.macuguita.daisy.daisy_home.attachments.HomeAttachedData
+import com.macuguita.daisy.daisy_home.attachments.Homes
+import com.macuguita.daisy.daisy_home.data.Home
 
 object ListHomesCommands : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {

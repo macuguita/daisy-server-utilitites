@@ -32,7 +32,9 @@
       }
     },
     "loom:injected_interfaces": {
-      "net/minecraft/world/level/storage/PlayerDataStorage": ["com/macuguita/daisy/daisy_base/duck/CustomPlayerDataStorage"]
+      "net/minecraft/world/level/storage/PlayerDataStorage": [
+        "com/macuguita/daisy/daisy_base/duck/CustomPlayerDataStorage"
+      ]
     }
   }
 }

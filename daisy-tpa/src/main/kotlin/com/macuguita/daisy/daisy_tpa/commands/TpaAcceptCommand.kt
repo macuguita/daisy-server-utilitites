@@ -31,7 +31,6 @@ import net.minecraft.network.chat.Component
 import net.minecraft.server.commands.TeleportCommand
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
-import net.minecraft.world.entity.Relative
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
 import com.macuguita.daisy.daisy_tpa.DaisyTpa
@@ -85,7 +84,7 @@ object TpaAcceptCommand : CommandRegistrator {
 	private fun executeTeleport(
 		source: CommandSourceStack,
 		target: ServerPlayer,
-		req: TpaRequest
+		req: TpaRequest,
 	) {
 		val server = target.server
 		val requester = server.playerList.getPlayer(req.requester) ?: return
@@ -160,7 +159,7 @@ object TpaAcceptCommand : CommandRegistrator {
 		y: Double,
 		z: Double,
 		yaw: Float,
-		pitch: Float
+		pitch: Float,
 	) {
 		TeleportCommand.performTeleport(
 			source,

@@ -20,33 +20,9 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguita.daisy.daisy_warp.data
+package com.macuguita.daisy.daisy_home.data
 
-import com.mojang.serialization.Codec
-import com.mojang.serialization.codecs.RecordCodecBuilder
-import net.minecraft.core.registries.Registries
-import net.minecraft.resources.Identifier
-import net.minecraft.resources.ResourceKey
-import net.minecraft.world.level.Level
-import net.minecraft.world.phys.Vec3
-
-data class Warp(
-	val name: String,
-	val position: Vec3,
-	val dimension: ResourceKey<Level>,
-) {
-	companion object {
-		private val LEVEL_CODEC = Identifier.CODEC.xmap(
-			{ rl -> ResourceKey.create(Registries.DIMENSION, rl) },
-			ResourceKey<Level>::identifier
-		)
-
-		val CODEC: Codec<Warp> = RecordCodecBuilder.create { i ->
-			i.group(
-				Codec.STRING.fieldOf("name").forGetter { it.name },
-				Vec3.CODEC.fieldOf("block_pos").forGetter { it.position },
-				LEVEL_CODEC.optionalFieldOf("dimension", Level.OVERWORLD).forGetter { it.dimension },
-			).apply(i, ::Warp)
-		}
-	}
+enum class RemoveHomeResult {
+	SUCCESS,
+	NOT_FOUND
 }

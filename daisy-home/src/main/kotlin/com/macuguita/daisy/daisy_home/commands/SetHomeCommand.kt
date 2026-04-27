@@ -1,15 +1,18 @@
-package com.macuguta.daisy.daisy_home.commands
+package com.macuguita.daisy.daisy_home.commands
 
-import com.macuguta.daisy.daisy_home.attachments.HomeData
-import com.macuguta.daisy.daisy_home.attachments.Homes
-import com.macuguta.daisy.daisy_home.data.AddHomeResult
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
-import com.macuguita.daisy.daisy_base.commands.*
+import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
+import com.macuguita.daisy.daisy_base.commands.CommandResult
+import com.macuguita.daisy.daisy_base.commands.command
+import com.macuguita.daisy.daisy_base.commands.string
+import com.macuguita.daisy.daisy_home.attachments.HomeData
+import com.macuguita.daisy.daisy_home.attachments.Homes
+import com.macuguita.daisy.daisy_home.data.AddHomeResult
 
 object SetHomeCommand : CommandRegistrator {
 

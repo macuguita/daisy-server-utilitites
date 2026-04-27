@@ -25,9 +25,7 @@ package com.macuguita.daisy.daisy_warp.commands
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands.literal
-import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
-import net.minecraft.world.level.Level
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
 

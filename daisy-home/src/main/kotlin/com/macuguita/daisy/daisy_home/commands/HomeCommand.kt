@@ -20,16 +20,12 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguta.daisy.daisy_home.commands
+package com.macuguita.daisy.daisy_home.commands
 
-import com.macuguta.daisy.daisy_home.DaisyHome
-import com.macuguta.daisy.daisy_home.attachments.Homes
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandSourceStack
-import net.minecraft.commands.Commands.argument
-import net.minecraft.commands.Commands.literal
 import net.minecraft.network.chat.Component
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
@@ -37,6 +33,8 @@ import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
 import com.macuguita.daisy.daisy_base.commands.command
 import com.macuguita.daisy.daisy_base.commands.string
+import com.macuguita.daisy.daisy_home.DaisyHome
+import com.macuguita.daisy.daisy_home.attachments.Homes
 
 object HomeCommand : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
@@ -60,7 +58,7 @@ object HomeCommand : CommandRegistrator {
 	private fun teleportToHome(
 		player: ServerPlayer,
 		server: MinecraftServer,
-		name: String
+		name: String,
 	): CommandResult {
 
 		val homeData = Homes.get(player)

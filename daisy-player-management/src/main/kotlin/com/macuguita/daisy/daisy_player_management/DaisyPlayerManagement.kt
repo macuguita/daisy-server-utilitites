@@ -43,7 +43,12 @@ import com.macuguita.daisy.daisy_player_management.mixin.ServerPlayerAccessor
 object DaisyPlayerManagement : ModInitializer {
 
 	private val MOD_ID = "daisy-player-management"
-	val CONFIG = WrappedConfig.createToml(FabricLoader.getInstance().configDir, "daisy", MOD_ID, PlayerManagementConfig::class.java)
+	val CONFIG = WrappedConfig.createToml(
+		FabricLoader.getInstance().configDir,
+		"daisy",
+		MOD_ID,
+		PlayerManagementConfig::class.java
+	)
 
 	override fun onInitialize() {
 		if (!CONFIG.isEnabled) return
@@ -55,7 +60,8 @@ object DaisyPlayerManagement : ModInitializer {
 	}
 
 	fun savePlayerData(player: ServerPlayer) {
-		val playerDataDir = (player as ServerPlayerAccessor).`daisy$getServer`().getWorldPath(LevelResource.PLAYER_DATA_DIR).toFile()
+		val playerDataDir =
+			(player as ServerPlayerAccessor).`daisy$getServer`().getWorldPath(LevelResource.PLAYER_DATA_DIR).toFile()
 		try {
 			ProblemReporter.ScopedCollector(player.problemPath(), LogUtils.getLogger()).use { logging ->
 				val nbtWriteView = TagValueOutput.createWithContext(logging, player.registryAccess())

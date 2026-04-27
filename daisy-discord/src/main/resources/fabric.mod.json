@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "daisy-home",
+  "id": "daisy-discord",
   "version": "${version}",
-  "name": "Daisy Home",
-  "description": "Daisy Server utilities home module",
+  "name": "Daisy Discord",
+  "description": "Daisy Server utilities discord module",
   "authors": [
     "macuguita"
   ],
@@ -12,12 +12,12 @@
     "sources": "https://github.com/macuguita/daisy-server-utilitites"
   },
   "license": "MIT",
-  "icon": "assets/daisy-tpa/icon.png",
+  "icon": "assets/daisy-discord/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": [
+    "server": [
       {
-        "value": "com.macuguita.daisy.daisy_home.DaisyHome",
+        "value": "com.macuguita.daisy.daisy_discord.DaisyDiscord",
         "adapter": "kotlin"
       }
     ]

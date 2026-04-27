@@ -31,7 +31,6 @@ import net.minecraft.commands.Commands
 import net.minecraft.commands.Commands.argument
 import net.minecraft.commands.Commands.literal
 import net.minecraft.commands.arguments.GameProfileArgument
-import net.minecraft.nbt.DoubleTag
 import net.minecraft.nbt.ListTag
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
@@ -105,9 +104,9 @@ object PlayerPosCommand : CommandRegistrator {
 		val nbt = server.playerDataStorage.`daisy$getNbt`(uuid)
 
 		val pos = nbt.getList("Pos").orElse(ListTag())
-		val x = pos!!.getDouble(0).getOrElse{ 0.0 }
-		val y = pos.getDouble(1).getOrElse{ 0.0 }
-		val z = pos.getDouble(2).getOrElse{ 0.0 }
+		val x = pos!!.getDouble(0).getOrElse { 0.0 }
+		val y = pos.getDouble(1).getOrElse { 0.0 }
+		val z = pos.getDouble(2).getOrElse { 0.0 }
 
 		return Vec3(x, y, z)
 	}

@@ -51,35 +51,11 @@ import com.macuguita.daisy.daisy_base.commands.gameProfile
 import com.macuguita.daisy.daisy_player_management.menu.SavingPlayerDataMenu
 import com.macuguita.daisy.daisy_player_management.mixin.EntityAccessor
 
-object ViewCommand: CommandRegistrator {
+object ViewCommand : CommandRegistrator {
 
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
-		dispatcher.command("view") {
+		dispatcher.command("inview") {
 			requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
-
-			literal("inv") {
-				argument("player", GameProfileArgument.gameProfile()) {
-					executes {
-						val target = resolveTarget() ?: return@executes CommandResult.FAILURE
-						val viewer = source.player ?: return@executes CommandResult.FAILURE
-
-						openInventoryGui(viewer, target)
-						CommandResult.SUCCESS
-					}
-				}
-			}
-
-			literal("echest") {
-				argument("player", GameProfileArgument.gameProfile()) {
-					executes {
-						val target = resolveTarget() ?: return@executes CommandResult.FAILURE
-						val viewer = source.player ?: return@executes CommandResult.FAILURE
-
-						openEnderChestGui(viewer, target)
-						CommandResult.SUCCESS
-					}
-				}
-			}
 
 			argument("player", GameProfileArgument.gameProfile()) {
 				executes {
@@ -87,6 +63,20 @@ object ViewCommand: CommandRegistrator {
 					val viewer = source.player ?: return@executes CommandResult.FAILURE
 
 					openInventoryGui(viewer, target)
+					CommandResult.SUCCESS
+				}
+			}
+		}
+
+		dispatcher.command("echestview") {
+			requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
+
+			argument("player", GameProfileArgument.gameProfile()) {
+				executes {
+					val target = resolveTarget() ?: return@executes CommandResult.FAILURE
+					val viewer = source.player ?: return@executes CommandResult.FAILURE
+
+					openEnderChestGui(viewer, target)
 					CommandResult.SUCCESS
 				}
 			}
