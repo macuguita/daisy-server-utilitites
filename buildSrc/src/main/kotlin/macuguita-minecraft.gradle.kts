@@ -53,7 +53,7 @@ repositories {
 		Triple("Modrinth", "https://api.modrinth.com/maven", listOf("maven.modrinth")),
 		Triple("Parchment Mappings", "https://maven.parchmentmc.org", listOf("org.parchmentmc")),
 		Triple("Jitpack", "https://jitpack.io", emptyList()),
-		Triple("Nucleoid", "https://maven.nucleoid.xyz", listOf("xyz.nucleoid")),
+		Triple("Nucleoid", "https://maven.nucleoid.xyz", listOf("xyz.nucleoid", "eu.pb4")),
 	)
 
 	exclusiveRepos.forEach { (name, url, groups) ->

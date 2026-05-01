@@ -4,6 +4,7 @@
 # against bad commits.
 
 name: build
+
 on: [ pull_request, push ]
 
 jobs:
@@ -11,7 +12,9 @@ jobs:
         strategy:
             matrix:
                 java: [ 21 ]
+
         runs-on: ubuntu-22.04
+
         steps:
             -   name: checkout repository
                 uses: actions/checkout@v4
@@ -23,23 +26,15 @@ jobs:
                 uses: actions/setup-java@v4
                 with:
                     java-version: ${{ matrix.java }}
-                    distribution: 'microsoft'
+                    distribution: temurin
 
-            -   name: cache Gradle packages
-                uses: actions/cache@v3
-                with:
-                    path: |
-                        ~/.gradle/caches
-                        ~/.gradle/wrapper
-                    key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-                    restore-keys: |
-                        gradle-${{ runner.os }}-
-
-            -   name: make gradle wrapper executable
-                run: chmod +x ./gradlew
+            -   name: setup Gradle
+                uses: gradle/actions/setup-gradle@v3
 
             -   name: build
-                run: ./gradlew build --no-daemon
+                run: |
+                    chmod +x ./gradlew
+                    ./gradlew build --no-daemon
 
             -   name: capture build artifacts
                 if: ${{ matrix.java == '21' }}

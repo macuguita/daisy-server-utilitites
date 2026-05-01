@@ -20,15 +20,9 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguta.daisy.daisy_home
+package com.macuguita.daisy.daisy_home
 
 import com.google.common.reflect.Reflection
-import com.macuguta.daisy.daisy_home.attachments.Homes
-import com.macuguta.daisy.daisy_home.commands.DelHomeCommand
-import com.macuguta.daisy.daisy_home.commands.HomeCommand
-import com.macuguta.daisy.daisy_home.commands.ListHomesCommands
-import com.macuguta.daisy.daisy_home.commands.SetHomeCommand
-import com.macuguta.daisy.daisy_home.commands.SetMaxHomesCommand
 import folk.sisby.kaleido.api.WrappedConfig
 import java.util.concurrent.CompletableFuture
 import com.mojang.brigadier.context.CommandContext
@@ -39,6 +33,12 @@ import net.minecraft.resources.ResourceLocation
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
+import com.macuguita.daisy.daisy_home.attachments.Homes
+import com.macuguita.daisy.daisy_home.commands.DelHomeCommand
+import com.macuguita.daisy.daisy_home.commands.HomeCommand
+import com.macuguita.daisy.daisy_home.commands.ListHomesCommands
+import com.macuguita.daisy.daisy_home.commands.SetHomeCommand
+import com.macuguita.daisy.daisy_home.commands.SetMaxHomesCommand
 
 object DaisyHome : ModInitializer {
 	private val MOD_ID = "daisy-home"

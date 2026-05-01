@@ -26,7 +26,6 @@ import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands.literal
 import net.minecraft.network.chat.Component
-import net.minecraft.world.level.Level
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
 
@@ -36,20 +35,17 @@ object SpawnCommand : CommandRegistrator {
 			literal("spawn")
 				.executes { ctx ->
 					val player = ctx.source.playerOrException
-					val overworld = ctx.source.server.getLevel(Level.OVERWORLD)
-						?: return@executes CommandResult.FAILURE.value.also {
-							ctx.source.sendFailure(Component.translatable("daisy.command.spawn.error.no_overworld"))
-						}
-
-					val spawnPos = overworld.sharedSpawnPos
+					val server = ctx.source.server
+					val spawnPos = server.overworld().levelData.spawnPos
 
 					player.teleportTo(
-						overworld,
+						server.overworld(),
 						spawnPos.x + 0.5,
 						spawnPos.y.toDouble(),
 						spawnPos.z + 0.5,
+						emptySet(),
 						player.yRot,
-						player.xRot
+						player.xRot,
 					)
 
 					player.sendSystemMessage(Component.translatable("daisy.command.spawn.success"))

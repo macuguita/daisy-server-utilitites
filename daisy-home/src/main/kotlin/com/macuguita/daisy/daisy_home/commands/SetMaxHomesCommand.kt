@@ -20,49 +20,58 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguta.daisy.daisy_home.commands
+package com.macuguita.daisy.daisy_home.commands
 
-import com.macuguta.daisy.daisy_home.attachments.Homes
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import net.minecraft.commands.CommandSourceStack
-import net.minecraft.commands.Commands.argument
-import net.minecraft.commands.Commands.literal
+import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.network.chat.Component
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
+import com.macuguita.daisy.daisy_base.commands.command
+import com.macuguita.daisy.daisy_base.commands.int
+import com.macuguita.daisy.daisy_base.commands.playerArg
+import com.macuguita.daisy.daisy_home.attachments.Homes
 
 object SetMaxHomesCommand : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
-		dispatcher.register(
-			literal("setmaxhomes")
-				.requires { it.hasPermission(2) }
-				.then(
-					argument("player", EntityArgument.player())
-						.then(
-							argument("amount", IntegerArgumentType.integer(1))
-								.executes { ctx ->
-									val player = EntityArgument.getPlayer(ctx, "player")
-									val amount = IntegerArgumentType.getInteger(ctx, "amount")
-									Homes.get(player).maxHomes = amount
-									player.sendSystemMessage(
-										Component.translatable("daisy.command.setmaxhomes.feedback.target", amount)
-									)
-									ctx.source.sendSuccess(
-										{
-											Component.translatable(
-												"daisy.command.setmaxhomes.feedback.user",
-												player.name.string,
-												amount
-											)
-										},
-										true
-									)
-									CommandResult.SUCCESS.value
-								}
+		dispatcher.command("setmaxhomes") {
+
+			requires { it.hasPermission(Commands.LEVEL_ADMINS) }
+
+			argument("player", EntityArgument.player()) {
+				argument("amount", IntegerArgumentType.integer(1)) {
+
+					executes {
+						val target = playerArg("player")
+						val amount = int("amount")
+
+						Homes.get(target).maxHomes = amount
+
+						target.sendSystemMessage(
+							Component.translatable(
+								"daisy.command.setmaxhomes.feedback.target",
+								amount
+							)
 						)
-				)
-		)
+
+						source.sendSuccess(
+							{
+								Component.translatable(
+									"daisy.command.setmaxhomes.feedback.user",
+									target.name.string,
+									amount
+								)
+							},
+							true
+						)
+
+						CommandResult.SUCCESS
+					}
+				}
+			}
+		}
 	}
 }

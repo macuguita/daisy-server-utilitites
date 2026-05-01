@@ -20,17 +20,13 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguta.daisy.daisy_home.commands
+package com.macuguita.daisy.daisy_home.commands
 
-import com.macuguta.daisy.daisy_home.attachments.HomeAttachedData
-import com.macuguta.daisy.daisy_home.attachments.Homes
-import com.macuguta.daisy.daisy_home.data.Home
 import java.util.*
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandSourceStack
-import net.minecraft.commands.Commands.argument
-import net.minecraft.commands.Commands.literal
+import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.GameProfileArgument
 import net.minecraft.nbt.NbtOps
 import net.minecraft.network.chat.ClickEvent
@@ -40,67 +36,70 @@ import net.minecraft.network.chat.MutableComponent
 import net.minecraft.server.MinecraftServer
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
+import com.macuguita.daisy.daisy_base.commands.command
+import com.macuguita.daisy.daisy_base.commands.gameProfile
 import com.macuguita.daisy.daisy_base.toCommandString
 import com.macuguita.daisy.daisy_base.toShortString
+import com.macuguita.daisy.daisy_home.attachments.HomeAttachedData
+import com.macuguita.daisy.daisy_home.attachments.Homes
+import com.macuguita.daisy.daisy_home.data.Home
 
 object ListHomesCommands : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
 
-		dispatcher.register(
-			literal("homes")
-				.executes { ctx ->
-					val player = ctx.source.playerOrException
-					val homes = Homes.get(player).homes
-					sendHomeList(ctx.source, player.name.string, homes, useHomeCommand = true)
+		dispatcher.command("homes") {
+			executes {
+				val player = source.playerOrException
+				sendHomeList(source, player.name.string, Homes.get(player).homes, useHomeCommand = true)
+			}
+		}
+
+		dispatcher.command("playerhomes") {
+			requires { it.hasPermission(Commands.LEVEL_ADMINS)}
+
+			argument("player", GameProfileArgument.gameProfile()) {
+				executes {
+					val profiles = gameProfile("player")
+
+					if (profiles.size != 1) {
+						source.sendFailure(
+							Component.translatable("daisy.command.playerhomes.error.one_player")
+								.withStyle(ChatFormatting.RED)
+						)
+						return@executes CommandResult.FAILURE
+					}
+
+					val profile = profiles.first()
+					val server = source.server
+					val onlinePlayer = server.playerList.getPlayer(profile.id)
+					val homes = if (onlinePlayer != null) {
+						Homes.get(onlinePlayer).homes
+					} else {
+						getOfflineHomes(server, profile.id)
+					}
+
+					if (homes == null) {
+						source.sendFailure(
+							Component.translatable("daisy.command.playerhomes.error.no_homes_found", profile.name)
+								.withStyle(ChatFormatting.RED)
+						)
+						return@executes CommandResult.FAILURE
+					}
+
+					sendHomeList(source, profile.name, homes, useHomeCommand = false)
 				}
-		)
-
-		dispatcher.register(
-			literal("playerhomes")
-				.requires { it.hasPermission(2) }
-				.then(
-					argument("player", GameProfileArgument.gameProfile())
-						.executes { ctx ->
-							val profiles = GameProfileArgument.getGameProfiles(ctx, "player")
-							if (profiles.size != 1) {
-								ctx.source.sendFailure(
-									Component.translatable("daisy.command.playerhomes.error.one_player")
-										.withStyle(ChatFormatting.RED)
-								)
-								return@executes CommandResult.FAILURE.value
-							}
-
-							val profile = profiles.first()
-							val server = ctx.source.server
-							val onlinePlayer = server.playerList.getPlayer(profile.id)
-							val homes = if (onlinePlayer != null) {
-								Homes.get(onlinePlayer).homes
-							} else {
-								getOfflineHomes(server, profile.id)
-							}
-
-							if (homes == null) {
-								ctx.source.sendFailure(
-									Component.translatable("daisy.command.playerhomes.error.no_homes_found", profile.name)
-										.withStyle(ChatFormatting.RED)
-								)
-								return@executes CommandResult.FAILURE.value
-							}
-
-							sendHomeList(ctx.source, profile.name, homes, useHomeCommand = false)
-						}
-				)
-		)
+			}
+		}
 	}
 
 	private fun getOfflineHomes(server: MinecraftServer, uuid: UUID): List<Home>? {
 		val nbt = server.playerDataStorage.`daisy$getNbt`(uuid)
 
-		val attachments = nbt.getCompound("fabric:attachments")
-		if (!attachments.contains("daisy-home:homes")) return null
+		val attachments = nbt.getCompound("fabric:attachments").getCompound("daisy-home:homes")
+		if (attachments.isEmpty) return null
 
 		return HomeAttachedData.CODEC
-			.parse(NbtOps.INSTANCE, attachments.getCompound("daisy-home:homes"))
+			.parse(NbtOps.INSTANCE, attachments)
 			.resultOrPartial { }
 			.map { it.homes }
 			.orElse(null)
@@ -111,13 +110,13 @@ object ListHomesCommands : CommandRegistrator {
 		playerName: String,
 		homes: List<Home>,
 		useHomeCommand: Boolean,
-	): Int {
+	): CommandResult {
 		if (homes.isEmpty()) {
 			source.sendFailure(
 				Component.translatable("daisy.command.homes.error.no_homes", playerName)
 					.withStyle(ChatFormatting.RED)
 			)
-			return CommandResult.FAILURE.value
+			return CommandResult.FAILURE
 		}
 
 		val text: MutableComponent = Component.translatable("daisy.command.homes.feedback.1", playerName)
@@ -139,7 +138,12 @@ object ListHomesCommands : CommandRegistrator {
 					.withStyle { style ->
 						style
 							.withColor(ChatFormatting.GREEN)
-							.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand))
+							.withClickEvent(
+								ClickEvent(
+									ClickEvent.Action.RUN_COMMAND,
+									clickCommand
+								)
+							)
 							.withHoverEvent(
 								HoverEvent(
 									HoverEvent.Action.SHOW_TEXT,
@@ -153,6 +157,6 @@ object ListHomesCommands : CommandRegistrator {
 		}
 
 		source.sendSuccess({ text }, false)
-		return CommandResult.SUCCESS.value
+		return CommandResult.SUCCESS
 	}
 }

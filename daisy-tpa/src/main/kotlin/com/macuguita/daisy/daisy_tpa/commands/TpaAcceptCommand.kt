@@ -28,6 +28,8 @@ import net.minecraft.commands.Commands.argument
 import net.minecraft.commands.Commands.literal
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.network.chat.Component
+import net.minecraft.server.commands.TeleportCommand
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
@@ -50,7 +52,7 @@ object TpaAcceptCommand : CommandRegistrator {
 						return@executes CommandResult.FAILURE.value
 					}
 
-					executeTeleport(player, req)
+					executeTeleport(ctx.source, player, req)
 					CommandResult.SUCCESS.value
 				}
 				.then(
@@ -72,15 +74,19 @@ object TpaAcceptCommand : CommandRegistrator {
 								return@executes CommandResult.FAILURE.value
 							}
 
-							executeTeleport(player, req)
+							executeTeleport(ctx.source, player, req)
 							CommandResult.SUCCESS.value
 						}
 				)
 		)
 	}
 
-	private fun executeTeleport(target: ServerPlayer, req: TpaRequest) {
-		val server = target.server ?: return
+	private fun executeTeleport(
+		source: CommandSourceStack,
+		target: ServerPlayer,
+		req: TpaRequest,
+	) {
+		val server = target.server
 		val requester = server.playerList.getPlayer(req.requester) ?: return
 
 		val targetName = target.gameProfile.name
@@ -89,13 +95,16 @@ object TpaAcceptCommand : CommandRegistrator {
 		when (req.type) {
 			TpaType.TO -> {
 				requester.stopRiding()
-				requester.teleportTo(
-					target.serverLevel(),
-					target.x,
-					target.y,
-					target.z,
-					target.yRot,
-					target.xRot
+
+				teleport(
+					source = source,
+					victim = requester,
+					level = target.serverLevel(),
+					x = target.x,
+					y = target.y,
+					z = target.z,
+					yaw = target.yRot,
+					pitch = target.xRot
 				)
 
 				target.sendSystemMessage(
@@ -114,23 +123,52 @@ object TpaAcceptCommand : CommandRegistrator {
 
 			TpaType.HERE -> {
 				target.stopRiding()
-				target.teleportTo(
-					requester.serverLevel(),
-					requester.x,
-					requester.y,
-					requester.z,
-					requester.yRot,
-					requester.xRot
+
+				teleport(
+					source = source,
+					victim = target,
+					level = requester.serverLevel(),
+					x = requester.x,
+					y = requester.y,
+					z = requester.z,
+					yaw = requester.yRot,
+					pitch = requester.xRot
 				)
 
-				target.sendSystemMessage(Component.translatable("daisy.command.tpaacept.feedback.target", target))
+				target.sendSystemMessage(
+					Component.translatable(
+						"daisy.command.tpaacept.feedback.target",
+						requesterName
+					)
+				)
 				requester.sendSystemMessage(
 					Component.translatable(
 						"daisy.command.tpaacept.feedback.requester",
-						requester
+						targetName
 					)
 				)
 			}
 		}
+	}
+
+	private fun teleport(
+		source: CommandSourceStack,
+		victim: ServerPlayer,
+		level: ServerLevel,
+		x: Double,
+		y: Double,
+		z: Double,
+		yaw: Float,
+		pitch: Float,
+	) {
+		TeleportCommand.performTeleport(
+			source,
+			victim,
+			level,
+			x, y, z,
+			emptySet(),
+			yaw, pitch,
+			null
+		)
 	}
 }

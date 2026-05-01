@@ -31,4 +31,6 @@ dependencies {
 			providers.gradleProperty("server_translations_api_version").get()
 		}"
 	)
+	modImplementation("eu.pb4:sgui:${providers.gradleProperty("sgui_version").get()}")
+	include("eu.pb4:sgui:${providers.gradleProperty("sgui_version").get()}")
 }

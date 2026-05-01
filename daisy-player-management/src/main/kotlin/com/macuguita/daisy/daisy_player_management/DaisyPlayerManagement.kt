@@ -23,22 +23,57 @@
 package com.macuguita.daisy.daisy_player_management
 
 import folk.sisby.kaleido.api.WrappedConfig
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import org.slf4j.LoggerFactory
+import net.minecraft.Util
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtIo
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.level.storage.LevelResource
+import net.minecraft.world.level.storage.PlayerDataStorage
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
+import com.macuguita.daisy.daisy_base.DaisyBase
 import com.macuguita.daisy.daisy_player_management.commands.OfflineTpCommand
 import com.macuguita.daisy.daisy_player_management.commands.PlayerPosCommand
+import com.macuguita.daisy.daisy_player_management.commands.ViewCommand
+
 
 object DaisyPlayerManagement : ModInitializer {
 
 	private val MOD_ID = "daisy-player-management"
-	val CONFIG = WrappedConfig.createToml(FabricLoader.getInstance().configDir, "daisy", MOD_ID, PlayerManagementConfig::class.java)
+	val CONFIG = WrappedConfig.createToml(
+		FabricLoader.getInstance().configDir,
+		"daisy",
+		MOD_ID,
+		PlayerManagementConfig::class.java
+	)
+	val LOGGER = LoggerFactory.getLogger(MOD_ID)
 
 	override fun onInitialize() {
 		if (!CONFIG.isEnabled) return
 		CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
 			OfflineTpCommand.register(dispatcher)
 			PlayerPosCommand.register(dispatcher)
+			ViewCommand.register(dispatcher)
+		}
+	}
+
+	fun savePlayerData(player: ServerPlayer) {
+		val playerDataDir = player.server.getWorldPath(LevelResource.PLAYER_DATA_DIR).toFile()
+		try {
+			val compoundTag = player.saveWithoutId(CompoundTag())
+			val path = playerDataDir.toPath()
+			val path2 = Files.createTempFile(path, player.getStringUUID() + "-", ".dat")
+			NbtIo.writeCompressed(compoundTag, path2)
+			val path3 = path.resolve(player.getStringUUID() + ".dat")
+			val path4 = path.resolve(player.getStringUUID() + ".dat_old")
+			Util.safeReplaceFile(path3, path2, path4)
+		} catch (_: Exception) {
+			LOGGER.warn("Failed to save player data for {}", player.name.string)
 		}
 	}
 }

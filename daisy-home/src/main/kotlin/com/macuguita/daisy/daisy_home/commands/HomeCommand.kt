@@ -20,54 +20,81 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguta.daisy.daisy_home.commands
+package com.macuguita.daisy.daisy_home.commands
 
-import com.macuguta.daisy.daisy_home.DaisyHome
-import com.macuguta.daisy.daisy_home.attachments.Homes
-import com.macuguta.daisy.daisy_home.data.RemoveHomeResult
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandSourceStack
-import net.minecraft.commands.Commands.argument
-import net.minecraft.commands.Commands.literal
 import net.minecraft.network.chat.Component
+import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
+import com.macuguita.daisy.daisy_base.commands.command
+import com.macuguita.daisy.daisy_base.commands.string
+import com.macuguita.daisy.daisy_home.DaisyHome
+import com.macuguita.daisy.daisy_home.attachments.Homes
 
-object DelHomeCommand : CommandRegistrator {
+object HomeCommand : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
-		dispatcher.register(
-			literal("delhome")
-				.then(
-					argument("name", StringArgumentType.word())
-						.suggests { context, builder -> DaisyHome.suggestHomes(context, builder) }
-						.executes { ctx ->
-							val player = ctx.source.playerOrException
-							val name = StringArgumentType.getString(ctx, "name")
-							deleteHome(player, name)
-						}
-				)
-		)
-	}
+		dispatcher.command("home") {
 
-	private fun deleteHome(player: ServerPlayer, name: String): Int {
-		val homeData = Homes.get(player)
-
-		return when (homeData.removeHome(name)) {
-			RemoveHomeResult.SUCCESS -> {
-				player.sendSystemMessage(Component.translatable("daisy.command.delhome.success", name))
-				CommandResult.SUCCESS.value
+			executes {
+				teleportToHome(source.playerOrException, source.server, "home")
 			}
 
-			RemoveHomeResult.NOT_FOUND -> {
-				player.sendSystemMessage(
-					Component.translatable("daisy.command.delhome.error.not_found", name)
-						.withStyle(ChatFormatting.RED)
-				)
-				CommandResult.FAILURE.value
+			argument("name", StringArgumentType.word()) {
+
+				suggests(DaisyHome::suggestHomes)
+
+				executes {
+					teleportToHome(source.playerOrException, source.server, string("name"))
+				}
 			}
 		}
+	}
+
+	private fun teleportToHome(
+		player: ServerPlayer,
+		server: MinecraftServer,
+		name: String,
+	): CommandResult {
+
+		val homeData = Homes.get(player)
+
+		val home = homeData.homes.find { it.name == name.lowercase() }
+			?: return CommandResult.FAILURE.also {
+				player.sendSystemMessage(
+					Component.translatable("daisy.command.home.error.not_found", name)
+						.withStyle(ChatFormatting.RED)
+				)
+			}
+
+		val level = server.getLevel(home.dimension)
+			?: return CommandResult.FAILURE.also {
+				player.sendSystemMessage(
+					Component.translatable(
+						"daisy.command.home.error.level_not_found",
+						home.dimension.location()
+					).withStyle(ChatFormatting.RED)
+				)
+			}
+
+		player.teleportTo(
+			level,
+			home.position.x,
+			home.position.y,
+			home.position.z,
+			emptySet(),
+			player.yRot,
+			player.xRot,
+		)
+
+		player.sendSystemMessage(
+			Component.translatable("daisy.command.home.success", name)
+		)
+
+		return CommandResult.SUCCESS
 	}
 }

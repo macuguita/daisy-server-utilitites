@@ -20,64 +20,50 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguta.daisy.daisy_home.commands
+package com.macuguita.daisy.daisy_home.commands
 
-import com.macuguta.daisy.daisy_home.attachments.HomeData
-import com.macuguta.daisy.daisy_home.attachments.Homes
-import com.macuguta.daisy.daisy_home.data.AddHomeResult
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandSourceStack
-import net.minecraft.commands.Commands.argument
-import net.minecraft.commands.Commands.literal
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
+import com.macuguita.daisy.daisy_base.commands.command
+import com.macuguita.daisy.daisy_base.commands.string
+import com.macuguita.daisy.daisy_home.DaisyHome
+import com.macuguita.daisy.daisy_home.attachments.Homes
+import com.macuguita.daisy.daisy_home.data.RemoveHomeResult
 
-object SetHomeCommand : CommandRegistrator {
+object DelHomeCommand : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
-		dispatcher.register(
-			literal("sethome")
-				.then(
-					argument("name", StringArgumentType.word())
-						.executes { ctx ->
-							val player = ctx.source.playerOrException
-							val name = StringArgumentType.getString(ctx, "name")
-							return@executes addHome(player, name)
-						}
-				)
-				.executes { ctx ->
-					val player = ctx.source.playerOrException
-					return@executes addHome(player, "home")
+		dispatcher.command("delhome") {
+			argument("name", StringArgumentType.word()) {
+				suggests(DaisyHome::suggestHomes)
+
+				executes {
+					deleteHome(source.playerOrException, string("name"))
 				}
-		)
+			}
+		}
 	}
 
-	private fun addHome(player: ServerPlayer, name: String): Int {
-		val homeData: HomeData = Homes.get(player)
+	private fun deleteHome(player: ServerPlayer, name: String): CommandResult {
+		val homeData = Homes.get(player)
 
-		return when (homeData.addHome(name, player.position(), player.level().dimension())) {
-			AddHomeResult.SUCCESS -> {
-				player.sendSystemMessage(Component.translatable("daisy.command.sethome.success", name))
-				CommandResult.SUCCESS.value
+		return when (homeData.removeHome(name)) {
+			RemoveHomeResult.SUCCESS -> {
+				player.sendSystemMessage(Component.translatable("daisy.command.delhome.success", name))
+				CommandResult.SUCCESS
 			}
 
-			AddHomeResult.AT_CAPACITY -> {
+			RemoveHomeResult.NOT_FOUND -> {
 				player.sendSystemMessage(
-					Component.translatable("daisy.command.sethome.error.at_capacity", homeData.maxHomes)
+					Component.translatable("daisy.command.delhome.error.not_found", name)
 						.withStyle(ChatFormatting.RED)
 				)
-				CommandResult.FAILURE.value
-			}
-
-			AddHomeResult.DUPLICATE_NAME -> {
-				player.sendSystemMessage(
-					Component.translatable("daisy.command.sethome.error.duplicate_name", name)
-						.withStyle(ChatFormatting.RED)
-				)
-				CommandResult.FAILURE.value
+				CommandResult.FAILURE
 			}
 		}
 	}

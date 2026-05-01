@@ -75,7 +75,12 @@ object WarpsCommand : CommandRegistrator {
 				.withStyle { style ->
 					style
 						.withColor(ChatFormatting.GREEN)
-						.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp ${warp.name}"))
+						.withClickEvent(
+							ClickEvent(
+								ClickEvent.Action.RUN_COMMAND,
+								"/warp ${warp.name}"
+							)
+						)
 						.withHoverEvent(
 							HoverEvent(
 								HoverEvent.Action.SHOW_TEXT,

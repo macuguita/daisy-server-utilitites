@@ -24,6 +24,7 @@ package com.macuguita.daisy.daisy_player_management.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.Commands
 import net.minecraft.commands.Commands.argument
 import net.minecraft.commands.Commands.literal
 import net.minecraft.commands.arguments.GameProfileArgument
@@ -39,7 +40,7 @@ object OfflineTpCommand : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
 		dispatcher.register(
 			literal("offlinetp")
-				.requires { it.hasPermission(2) }
+				.requires { it.hasPermission(Commands.LEVEL_ADMINS) }
 				.then(
 					argument("player", GameProfileArgument.gameProfile())
 						.then(
@@ -60,7 +61,7 @@ object OfflineTpCommand : CommandRegistrator {
 											"Pos",
 											newDoubleList(pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble())
 										)
-										it.putString("Dimension", ctx.source.level.dimension().toString())
+										it.putString("Dimension", ctx.source.level.dimension().location().toString())
 									}
 
 									ctx.source.sendSuccess(

@@ -22,13 +22,8 @@
 
 @file:Suppress("UnstableApiUsage")
 
-package com.macuguta.daisy.daisy_home.attachments
+package com.macuguita.daisy.daisy_home.attachments
 
-import com.macuguta.daisy.daisy_home.DaisyHome
-import com.macuguta.daisy.daisy_home.DaisyHome.id
-import com.macuguta.daisy.daisy_home.data.AddHomeResult
-import com.macuguta.daisy.daisy_home.data.Home
-import com.macuguta.daisy.daisy_home.data.RemoveHomeResult
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.resources.ResourceKey
@@ -37,6 +32,11 @@ import net.minecraft.world.phys.Vec3
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType
+import com.macuguita.daisy.daisy_home.DaisyHome
+import com.macuguita.daisy.daisy_home.DaisyHome.id
+import com.macuguita.daisy.daisy_home.data.AddHomeResult
+import com.macuguita.daisy.daisy_home.data.Home
+import com.macuguita.daisy.daisy_home.data.RemoveHomeResult
 
 object Homes {
 

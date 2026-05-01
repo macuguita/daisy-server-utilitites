@@ -20,7 +20,7 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguta.daisy.daisy_home.data
+package com.macuguita.daisy.daisy_home.data
 
 enum class AddHomeResult {
 	SUCCESS,

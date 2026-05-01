@@ -28,14 +28,6 @@ plugins {
 
 val base = extensions.getByType<BasePluginExtension>()
 
-loom {
-	runs {
-		register("rootClient") {
-			client()
-		}
-	}
-}
-
 subprojects {
 	apply(plugin = "macuguita-minecraft")
 }
@@ -85,6 +77,5 @@ tasks.jar {
 //		}
 //	}
 //}
-
 
 

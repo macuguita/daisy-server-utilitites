@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "daisy-discord",
+  "version": "${version}",
+  "name": "Daisy Discord",
+  "description": "Daisy Server utilities discord module",
+  "authors": [
+    "macuguita"
+  ],
+  "contact": {
+    "homepage": "https://macuguita.com/",
+    "sources": "https://github.com/macuguita/daisy-server-utilitites"
+  },
+  "license": "MIT",
+  "icon": "assets/daisy-discord/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "server": [
+      {
+        "value": "com.macuguita.daisy.daisy_discord.DaisyDiscord",
+        "adapter": "kotlin"
+      }
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.2",
+    "minecraft": "1.21.1",
+    "fabric-api": "*",
+    "fabric-language-kotlin": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": {
+        "id": "daisy-server-utilities"
+      }
+    }
+  }
+}

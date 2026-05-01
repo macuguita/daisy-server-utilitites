@@ -20,9 +20,13 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguta.daisy.daisy_home.data
+package com.macuguita.daisy.daisy_home
 
-enum class RemoveHomeResult {
-	SUCCESS,
-	NOT_FOUND
+import folk.sisby.kaleido.api.WrappedConfig
+import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment
+
+class HomeConfig : WrappedConfig() {
+	@Comment("Whether the module should be enabled.")
+	var isEnabled: Boolean = true
+	var maxDefaultHomes: Int = 3
 }

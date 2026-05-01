@@ -28,13 +28,14 @@ import java.nio.file.Path;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import net.minecraft.Util;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import com.mojang.datafixers.DataFixer;
 import com.mojang.serialization.DataResult;
-import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;

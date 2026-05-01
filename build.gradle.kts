@@ -29,6 +29,10 @@ base {
 	archivesName = providers.gradleProperty("archives_base_name")
 }
 
+repositories {
+	flatDir { dirs("libs") }
+}
+
 dependencies {
 	include("xyz.nucleoid:server-translations-api:${providers.gradleProperty("server_translations_api_version").get()}")
 	include("folk.sisby:kaleido-config:${providers.gradleProperty("kaleido_config_version").get()}")

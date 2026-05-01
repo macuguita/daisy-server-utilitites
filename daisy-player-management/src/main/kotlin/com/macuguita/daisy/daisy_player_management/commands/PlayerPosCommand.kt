@@ -23,12 +23,15 @@
 package com.macuguita.daisy.daisy_player_management.commands
 
 import java.util.*
+import kotlin.jvm.optionals.getOrElse
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.Commands
 import net.minecraft.commands.Commands.argument
 import net.minecraft.commands.Commands.literal
 import net.minecraft.commands.arguments.GameProfileArgument
+import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.Tag
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
@@ -45,7 +48,7 @@ object PlayerPosCommand : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
 		dispatcher.register(
 			literal("playerpos")
-				.requires { it.hasPermission(2) }
+				.requires { it.hasPermission(Commands.LEVEL_ADMINS) }
 				.then(
 					argument("player", GameProfileArgument.gameProfile())
 						.executes { ctx ->
