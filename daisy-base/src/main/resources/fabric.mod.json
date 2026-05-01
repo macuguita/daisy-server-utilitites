@@ -19,7 +19,7 @@
   ],
   "accessWidener": "daisy-base.accesswidener",
   "depends": {
-    "fabricloader": ">=0.19.2",
+    "fabricloader": ">=0.18.4",
     "minecraft": "1.21.1",
     "fabric-api": "*",
     "fabric-language-kotlin": "*"
