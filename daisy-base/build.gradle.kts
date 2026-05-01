@@ -29,5 +29,5 @@ loom {
 }
 
 dependencies {
-	api("folk.sisby:kaleido-config:${providers.gradleProperty("kaleido_config_version").get()}")
+	modApi("folk.sisby:kaleido-config:${providers.gradleProperty("kaleido_config_version").get()}")
 }

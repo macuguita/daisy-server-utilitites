@@ -42,4 +42,3 @@ jobs:
                 with:
                     name: Artifacts
                     path: build/libs/
-

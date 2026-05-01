@@ -43,7 +43,7 @@ dependencies {
 			providers.gradleProperty("server_translations_api_version").get()
 		}"
 	)
-	implementation("dev.kord:kord-core:${providers.gradleProperty("kord_version").get()}")
+	modImplementation("dev.kord:kord-core:${providers.gradleProperty("kord_version").get()}")
 	bundled("dev.kord:kord-core:${providers.gradleProperty("kord_version").get()}")
 }
 
