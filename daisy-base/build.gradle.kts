@@ -25,7 +25,7 @@ plugins {
 }
 
 loom {
-	accessWidenerPath.set(project.file("src/main/resources/daisy-tpa.accesswidener"))
+	accessWidenerPath.set(project.file("src/main/resources/daisy-base.accesswidener"))
 }
 
 dependencies {
