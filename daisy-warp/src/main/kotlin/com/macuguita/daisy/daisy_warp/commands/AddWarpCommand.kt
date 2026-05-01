@@ -40,7 +40,7 @@ object AddWarpCommand : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
 		dispatcher.register(
 			literal("addwarp")
-				.requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
+				.requires { it.hasPermission(Commands.LEVEL_ADMINS) }
 				.then(
 					argument("name", StringArgumentType.word())
 						.executes { ctx ->

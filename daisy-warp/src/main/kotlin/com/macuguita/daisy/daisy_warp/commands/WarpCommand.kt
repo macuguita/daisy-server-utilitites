@@ -71,7 +71,7 @@ object WarpCommand : CommandRegistrator {
 				player.sendSystemMessage(
 					Component.translatable(
 						"daisy.command.warp.error.level_not_found",
-						warp.dimension.identifier()
+						warp.dimension.location()
 					).withStyle(ChatFormatting.RED)
 				)
 			}
@@ -84,7 +84,6 @@ object WarpCommand : CommandRegistrator {
 			emptySet(),
 			player.yRot,
 			player.xRot,
-			true
 		)
 		player.sendSystemMessage(Component.translatable("daisy.command.warp.success", name))
 		return CommandResult.SUCCESS.value

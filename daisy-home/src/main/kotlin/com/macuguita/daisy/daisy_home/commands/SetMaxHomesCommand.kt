@@ -39,7 +39,7 @@ object SetMaxHomesCommand : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
 		dispatcher.command("setmaxhomes") {
 
-			requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
+			requires { it.hasPermission(Commands.LEVEL_ADMINS) }
 
 			argument("player", EntityArgument.player()) {
 				argument("amount", IntegerArgumentType.integer(1)) {

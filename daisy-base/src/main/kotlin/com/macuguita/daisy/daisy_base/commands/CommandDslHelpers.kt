@@ -22,6 +22,7 @@
 
 package com.macuguita.daisy.daisy_base.commands
 
+import com.mojang.authlib.GameProfile
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
@@ -31,7 +32,6 @@ import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.commands.arguments.GameProfileArgument
 import net.minecraft.server.level.ServerPlayer
-import net.minecraft.server.players.NameAndId
 
 fun CommandContext<CommandSourceStack>.string(name: String): String =
 	StringArgumentType.getString(this, name)
@@ -42,7 +42,7 @@ fun CommandContext<CommandSourceStack>.playerArg(name: String): ServerPlayer =
 fun CommandContext<CommandSourceStack>.int(name: String): Int =
 	IntegerArgumentType.getInteger(this, name)
 
-fun CommandContext<CommandSourceStack>.gameProfile(name: String): Collection<NameAndId> =
+fun CommandContext<CommandSourceStack>.gameProfile(name: String): Collection<GameProfile> =
 	GameProfileArgument.getGameProfiles(this, name)
 
 fun CommandDispatcher<CommandSourceStack>.command(

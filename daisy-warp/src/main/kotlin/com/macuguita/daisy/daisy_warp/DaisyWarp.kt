@@ -23,7 +23,7 @@
 package com.macuguita.daisy.daisy_warp
 
 import folk.sisby.kaleido.api.WrappedConfig
-import net.minecraft.resources.Identifier
+import net.minecraft.resources.ResourceLocation
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
@@ -51,6 +51,6 @@ object DaisyWarp : ModInitializer {
 		}
 	}
 
-	val String.id: Identifier
-		get() = Identifier.fromNamespaceAndPath(MOD_ID, this)
+	val String.id: ResourceLocation
+		get() = ResourceLocation.fromNamespaceAndPath(MOD_ID, this)
 }

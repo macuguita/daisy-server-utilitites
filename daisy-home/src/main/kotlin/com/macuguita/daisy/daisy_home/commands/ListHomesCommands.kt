@@ -55,7 +55,7 @@ object ListHomesCommands : CommandRegistrator {
 		}
 
 		dispatcher.command("playerhomes") {
-			requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
+			requires { it.hasPermission(Commands.LEVEL_ADMINS)}
 
 			argument("player", GameProfileArgument.gameProfile()) {
 				executes {
@@ -95,12 +95,11 @@ object ListHomesCommands : CommandRegistrator {
 	private fun getOfflineHomes(server: MinecraftServer, uuid: UUID): List<Home>? {
 		val nbt = server.playerDataStorage.`daisy$getNbt`(uuid)
 
-		val attachments = nbt.getCompound("fabric:attachments")
-			.flatMap { it.getCompound("daisy-home:homes") }
-		if (attachments.isEmpty()) return null
+		val attachments = nbt.getCompound("fabric:attachments").getCompound("daisy-home:homes")
+		if (attachments.isEmpty) return null
 
 		return HomeAttachedData.CODEC
-			.parse(NbtOps.INSTANCE, attachments.get())
+			.parse(NbtOps.INSTANCE, attachments)
 			.resultOrPartial { }
 			.map { it.homes }
 			.orElse(null)
@@ -124,7 +123,7 @@ object ListHomesCommands : CommandRegistrator {
 
 		homes.forEach { home ->
 			val pos = home.position
-			val dim = home.dimension.identifier()
+			val dim = home.dimension.location()
 
 			val clickCommand = if (useHomeCommand) {
 				"/home ${home.name}"
@@ -139,9 +138,15 @@ object ListHomesCommands : CommandRegistrator {
 					.withStyle { style ->
 						style
 							.withColor(ChatFormatting.GREEN)
-							.withClickEvent(ClickEvent.RunCommand(clickCommand))
+							.withClickEvent(
+								ClickEvent(
+									ClickEvent.Action.RUN_COMMAND,
+									clickCommand
+								)
+							)
 							.withHoverEvent(
-								HoverEvent.ShowText(
+								HoverEvent(
+									HoverEvent.Action.SHOW_TEXT,
 									Component.translatable("daisy.tooltip.teleport")
 								)
 							)

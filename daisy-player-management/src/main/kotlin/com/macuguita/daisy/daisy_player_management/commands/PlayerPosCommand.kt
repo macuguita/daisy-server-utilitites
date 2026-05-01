@@ -32,6 +32,7 @@ import net.minecraft.commands.Commands.argument
 import net.minecraft.commands.Commands.literal
 import net.minecraft.commands.arguments.GameProfileArgument
 import net.minecraft.nbt.ListTag
+import net.minecraft.nbt.Tag
 import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.HoverEvent
@@ -47,7 +48,7 @@ object PlayerPosCommand : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
 		dispatcher.register(
 			literal("playerpos")
-				.requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
+				.requires { it.hasPermission(Commands.LEVEL_ADMINS) }
 				.then(
 					argument("player", GameProfileArgument.gameProfile())
 						.executes { ctx ->
@@ -81,10 +82,16 @@ object PlayerPosCommand : CommandRegistrator {
 											.withStyle { style ->
 												style.withColor(ChatFormatting.GREEN)
 													.withClickEvent(
-														ClickEvent.RunCommand("/execute in $dim run tp @s ${playerPos.toCommandString()}")
+														ClickEvent(
+															ClickEvent.Action.RUN_COMMAND,
+															"/execute in $dim run tp @s ${playerPos.toCommandString()}"
+														)
 													)
 													.withHoverEvent(
-														HoverEvent.ShowText(Component.translatable("daisy.tooltip.teleport"))
+														HoverEvent(
+															HoverEvent.Action.SHOW_TEXT,
+															Component.translatable("daisy.tooltip.teleport")
+														)
 													)
 											})
 							}, false)
@@ -103,17 +110,17 @@ object PlayerPosCommand : CommandRegistrator {
 	fun getOfflinePlayerPos(server: MinecraftServer, uuid: UUID): Vec3 {
 		val nbt = server.playerDataStorage.`daisy$getNbt`(uuid)
 
-		val pos = nbt.getList("Pos").orElse(ListTag())
-		val x = pos!!.getDouble(0).getOrElse { 0.0 }
-		val y = pos.getDouble(1).getOrElse { 0.0 }
-		val z = pos.getDouble(2).getOrElse { 0.0 }
+		val pos = nbt.getList("Pos", Tag.TAG_DOUBLE.toInt())
+		val x = pos.getDouble(0)
+		val y = pos.getDouble(1)
+		val z = pos.getDouble(2)
 
 		return Vec3(x, y, z)
 	}
 
 	fun getOnlinePlayerLevel(server: MinecraftServer, uuid: UUID): String {
 		val player = server.playerList.getPlayer(uuid)
-		return if (player != null) player.level().dimension().identifier().toString() else getOfflinePlayerLevel(
+		return if (player != null) player.level().dimension().location().toString() else getOfflinePlayerLevel(
 			server,
 			uuid
 		)
@@ -122,6 +129,6 @@ object PlayerPosCommand : CommandRegistrator {
 	fun getOfflinePlayerLevel(server: MinecraftServer, uuid: UUID): String {
 		val nbt = server.playerDataStorage.`daisy$getNbt`(uuid)
 
-		return nbt.getString("Dimension").orElse("minecraft:overworld")!!
+		return nbt.getString("Dimension")
 	}
 }

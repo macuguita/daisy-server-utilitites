@@ -76,7 +76,7 @@ object HomeCommand : CommandRegistrator {
 				player.sendSystemMessage(
 					Component.translatable(
 						"daisy.command.home.error.level_not_found",
-						home.dimension.identifier()
+						home.dimension.location()
 					).withStyle(ChatFormatting.RED)
 				)
 			}
@@ -89,7 +89,6 @@ object HomeCommand : CommandRegistrator {
 			emptySet(),
 			player.yRot,
 			player.xRot,
-			true
 		)
 
 		player.sendSystemMessage(

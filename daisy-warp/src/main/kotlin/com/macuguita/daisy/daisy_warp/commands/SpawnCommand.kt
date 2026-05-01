@@ -36,17 +36,16 @@ object SpawnCommand : CommandRegistrator {
 				.executes { ctx ->
 					val player = ctx.source.playerOrException
 					val server = ctx.source.server
-					val spawnPos = server.respawnData
+					val spawnPos = server.overworld().levelData.spawnPos
 
 					player.teleportTo(
-						server.findRespawnDimension(),
-						spawnPos.pos().x + 0.5,
-						spawnPos.pos().y.toDouble(),
-						spawnPos.pos().z + 0.5,
+						server.overworld(),
+						spawnPos.x + 0.5,
+						spawnPos.y.toDouble(),
+						spawnPos.z + 0.5,
 						emptySet(),
 						player.yRot,
 						player.xRot,
-						true
 					)
 
 					player.sendSystemMessage(Component.translatable("daisy.command.spawn.success"))

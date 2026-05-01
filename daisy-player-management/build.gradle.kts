@@ -25,12 +25,12 @@ plugins {
 }
 
 dependencies {
-	api(project(mapOf("path" to ":daisy-base")))
-	implementation(
+	api(project(mapOf("path" to ":daisy-base", "configuration" to "namedElements")))
+	modImplementation(
 		"xyz.nucleoid:server-translations-api:${
 			providers.gradleProperty("server_translations_api_version").get()
 		}"
 	)
-	implementation("eu.pb4:sgui:${providers.gradleProperty("sgui_version").get()}")
+	modImplementation("eu.pb4:sgui:${providers.gradleProperty("sgui_version").get()}")
 	include("eu.pb4:sgui:${providers.gradleProperty("sgui_version").get()}")
 }

@@ -114,11 +114,17 @@ object DaisyTpa : ModInitializer {
 		Component.literal(" ")
 			.append(Component.translatable("daisy.command.accept_button").withStyle {
 				it.withClickEvent(
-					ClickEvent.RunCommand("/tpaaccept $senderName")
+					ClickEvent(
+						ClickEvent.Action.RUN_COMMAND,
+						"/tpaaccept $senderName"
+					)
 				)
 					.withColor(ChatFormatting.GREEN)
 					.withHoverEvent(
-						HoverEvent.ShowText(Component.translatable("daisy.tooltip.accept_teleport"))
+						HoverEvent(
+							HoverEvent.Action.SHOW_TEXT,
+							Component.translatable("daisy.tooltip.accept_teleport")
+						)
 					)
 			})
 

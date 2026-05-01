@@ -39,7 +39,7 @@ object DelWarpCommand : CommandRegistrator {
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
 		dispatcher.register(
 			literal("delwarp")
-				.requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
+				.requires { it.hasPermission(Commands.LEVEL_ADMINS) }
 				.then(
 					argument("name", StringArgumentType.word())
 						.suggests { ctx, builder ->

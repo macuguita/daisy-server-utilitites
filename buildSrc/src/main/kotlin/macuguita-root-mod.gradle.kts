@@ -33,9 +33,6 @@ loom {
 		register("rootClient") {
 			client()
 		}
-		register("rootServer") {
-			server()
-		}
 	}
 }
 
@@ -49,22 +46,24 @@ subprojects.forEach { sub ->
 			"api", project(
 				mapOf(
 					"path" to sub.path,
+					"configuration" to "namedElements"
 				)
 			)
 		)
 	}
 }
 
-val nestedJars by configurations.creating
-nestedJars.setTransitive(false)
-
-dependencies {
+tasks.remapJar {
 	subprojects.forEach { sub ->
-		nestedJars(project("${sub.path}"))
+		val subRemapJar = sub.tasks.remapJar
+
+		dependsOn(subRemapJar)
+
+		nestedJars.from(
+			subRemapJar.flatMap { it.archiveFile }
+		)
 	}
 }
-
-loom.nestJars(tasks.jar, nestedJars)
 
 tasks.jar {
 	from(rootProject.file("LICENSE")) {
@@ -86,6 +85,5 @@ tasks.jar {
 //		}
 //	}
 //}
-
 
 

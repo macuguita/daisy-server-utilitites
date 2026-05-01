@@ -99,7 +99,7 @@ object TpaAcceptCommand : CommandRegistrator {
 				teleport(
 					source = source,
 					victim = requester,
-					level = target.level(),
+					level = target.serverLevel(),
 					x = target.x,
 					y = target.y,
 					z = target.z,
@@ -127,7 +127,7 @@ object TpaAcceptCommand : CommandRegistrator {
 				teleport(
 					source = source,
 					victim = target,
-					level = requester.level(),
+					level = requester.serverLevel(),
 					x = requester.x,
 					y = requester.y,
 					z = requester.z,

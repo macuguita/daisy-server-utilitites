@@ -29,8 +29,8 @@ import com.macuguita.daisy.daisy_player_management.DaisyPlayerManagement
 
 class SavingPlayerDataMenu(type: MenuType<*>, player: ServerPlayer, val savedPlayer: ServerPlayer) :
 	SimpleGui(type, player, false) {
-	override fun onRemoved() {
-		super.onRemoved()
+	override fun onClose() {
+		super.onClose()
 		DaisyPlayerManagement.savePlayerData(savedPlayer)
 	}
 }

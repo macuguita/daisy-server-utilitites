@@ -27,23 +27,25 @@ import eu.pb4.sgui.api.gui.SimpleGui
 import com.mojang.authlib.GameProfile
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.logging.LogUtils
+import com.mojang.serialization.Dynamic
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.GameProfileArgument
 import net.minecraft.core.registries.Registries
+import net.minecraft.nbt.NbtOps
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.Identifier
 import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ClientInformation
 import net.minecraft.server.level.ServerPlayer
-import net.minecraft.server.players.NameAndId
 import net.minecraft.util.ProblemReporter
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Items
-import net.minecraft.world.level.storage.TagValueInput
+import net.minecraft.world.level.dimension.DimensionType
 import com.macuguita.daisy.daisy_base.commands.CommandRegistrator
 import com.macuguita.daisy.daisy_base.commands.CommandResult
 import com.macuguita.daisy.daisy_base.commands.command
@@ -51,11 +53,12 @@ import com.macuguita.daisy.daisy_base.commands.gameProfile
 import com.macuguita.daisy.daisy_player_management.menu.SavingPlayerDataMenu
 import com.macuguita.daisy.daisy_player_management.mixin.EntityAccessor
 
+
 object ViewCommand : CommandRegistrator {
 
 	override fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
 		dispatcher.command("inview") {
-			requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
+			requires { it.hasPermission(Commands.LEVEL_ADMINS) }
 
 			argument("player", GameProfileArgument.gameProfile()) {
 				executes {
@@ -69,7 +72,7 @@ object ViewCommand : CommandRegistrator {
 		}
 
 		dispatcher.command("echestview") {
-			requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
+			requires { it.hasPermission(Commands.LEVEL_ADMINS) }
 
 			argument("player", GameProfileArgument.gameProfile()) {
 				executes {
@@ -99,11 +102,11 @@ object ViewCommand : CommandRegistrator {
 
 	private fun openInventoryGui(viewer: ServerPlayer, target: ServerPlayer) {
 		val gui = SavingPlayerDataMenu(MenuType.GENERIC_9x5, viewer, target)
-		gui.setTitle(target.name)
+		gui.title = target.name
 		addBackground(gui)
 
 		for (i in 0 until target.inventory.containerSize) {
-			gui.setSlot(i, Slot(target.inventory, i, 0, 0))
+			gui.setSlotRedirect(i, Slot(target.inventory, i, 0, 0))
 		}
 
 		gui.open()
@@ -126,39 +129,26 @@ object ViewCommand : CommandRegistrator {
 		addBackground(gui)
 
 		for (i in 0 until echest.containerSize) {
-			gui.setSlot(i, Slot(echest, i, 0, 0))
+			gui.setSlotRedirect(i, Slot(echest, i, 0, 0))
 		}
 
 		gui.open()
 	}
 
-	private fun getPlayer(profile: NameAndId, source: CommandSourceStack): ServerPlayer? {
-		var requestedPlayer = source.server.playerList.getPlayer(profile.id())
+	private fun getPlayer(profile: GameProfile, source: CommandSourceStack): ServerPlayer? {
+		var requestedPlayer =
+			source.server.playerList.getPlayer(profile.id)
 
 		if (requestedPlayer == null) {
-			requestedPlayer = ServerPlayer(
-				source.server,
-				source.server.overworld(),
-				GameProfile(profile.id(), profile.name()),
-				ClientInformation.createDefault()
-			)
-			val readViewOpt = source.server.playerList
-				.loadPlayerData(profile).map({ playerData ->
-					TagValueInput.create(
-						ProblemReporter.ScopedCollector(LogUtils.getLogger()),
-						source.server.registryAccess(),
-						playerData
-					)
-				})
-			readViewOpt.ifPresent({ input -> requestedPlayer.load(input) })
-
-			if (readViewOpt.isPresent) {
-				val readView = readViewOpt.get()
-				val dimension = readView.getString("Dimension")
-
-				if (dimension.isPresent) {
+			requestedPlayer =
+				source.server.playerList.getPlayerForLogin(profile, ClientInformation.createDefault())
+			val compoundOpt = source.server.playerList.load(requestedPlayer)
+			if (compoundOpt.isPresent) {
+				val compound = compoundOpt.get()
+				if (compound.contains("Dimension")) {
 					val world = source.server.getLevel(
-						ResourceKey.create(Registries.DIMENSION, Identifier.tryParse(dimension.get()) ?: return null)
+						DimensionType.parseLegacy(Dynamic(NbtOps.INSTANCE, compound.get("Dimension")))
+							.result().get()
 					)
 
 					if (world != null) {
@@ -167,8 +157,47 @@ object ViewCommand : CommandRegistrator {
 				}
 			}
 		}
+
 		return requestedPlayer
 	}
+
+//	private fun getPlayer(profile: GameProfile, source: CommandSourceStack): ServerPlayer? {
+//		var requestedPlayer = source.server.playerList.getPlayer(profile.id)
+//
+//		if (requestedPlayer == null) {
+//			requestedPlayer = ServerPlayer(
+//				source.server,
+//				source.server.overworld(),
+//				GameProfile(profile.id, profile.name),
+//				ClientInformation.createDefault()
+//			)
+//			val readViewOpt = source.server.playerList
+//				.loadPlayerData(profile).map({ playerData ->
+//					TagValueInput.create(
+//						ProblemReporter.ScopedCollector(LogUtils.getLogger()),
+//						source.server.registryAccess(),
+//						playerData
+//					)
+//				})
+//			readViewOpt.ifPresent({ input -> requestedPlayer.load(input) })
+//
+//			if (readViewOpt.isPresent) {
+//				val readView = readViewOpt.get()
+//				val dimension = readView.getString("Dimension")
+//
+//				if (dimension.isPresent) {
+//					val world = source.server.getLevel(
+//						ResourceKey.create(Registries.DIMENSION, ResourceLocation.tryParse(dimension.get()) ?: return null)
+//					)
+//
+//					if (world != null) {
+//						(requestedPlayer as EntityAccessor).`daisy$setLevel`(world)
+//					}
+//				}
+//			}
+//		}
+//		return requestedPlayer
+//	}
 
 	private fun addBackground(gui: SimpleGui) {
 		for (i in 0..<gui.getSize()) {
