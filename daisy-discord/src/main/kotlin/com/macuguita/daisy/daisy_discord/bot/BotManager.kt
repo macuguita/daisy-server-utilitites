@@ -52,8 +52,15 @@ object BotManager {
 
 	@Volatile
 	private var isReady = false
+	@Volatile
+	private var started = false
 
 	fun start(modScope: CoroutineScope) {
+		if (started) {
+			DaisyDiscord.LOGGER.error("Bot Manager already started!")
+			return
+		}
+		started = true
 		scope = modScope
 		loginJob = scope.launch {
 			kord = Kord(DaisyDiscord.CONFIG.botToken)
