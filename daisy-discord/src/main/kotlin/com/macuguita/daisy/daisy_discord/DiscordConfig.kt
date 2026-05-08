@@ -31,7 +31,7 @@ class DiscordConfig : WrappedConfig() {
 	var isEnabled: Boolean = false
 	var botToken: String = "PLACE_TOKEN_HERE"
 	var channelId: String = "PLACE_CHANNEL_ID_HERE"
-	var avatarHeadsApi: String = "https://api.nucleoid.xyz/skin/face/%uuid%"
+	var avatarHeadsApi: String = "https://mc-heads.net/avatar/%uuid%"
 	var playerJoinMessage: String = "%username% joined the server"
 	var playerLeaveMessage: String = "%username% left the server"
 	var serverStartedMessage: String = "Server started."
