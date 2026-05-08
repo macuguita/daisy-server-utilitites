@@ -22,9 +22,8 @@
 
 package com.macuguita.daisy.daisy_discord
 
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents
 import com.macuguita.daisy.daisy_discord.bot.BotManager
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
-import com.macuguita.daisy.daisy_base.event.OnChatMessageEvent
 import com.macuguita.daisy.daisy_base.event.PlayerJoinEvent
 import com.macuguita.daisy.daisy_base.event.PlayerLeaveEvent
 import com.macuguita.daisy.daisy_base.event.ServerStartedEvent
@@ -51,8 +50,8 @@ object DiscordEvents {
 			)
 		}
 
-		OnChatMessageEvent.EVENT.register { chat, sender, _ ->
-			BotManager.sendPlayerMessage(sender, chat.signedContent().trim())
+		ServerMessageEvents.CHAT_MESSAGE.register { message, player, _ ->
+			BotManager.sendPlayerMessage(player, message.signedContent().trim())
 		}
 
 		ServerStartedEvent.EVENT.register {

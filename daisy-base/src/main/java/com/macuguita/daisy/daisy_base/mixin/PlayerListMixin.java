@@ -22,11 +22,6 @@
 
 package com.macuguita.daisy.daisy_base.mixin;
 
-import com.macuguita.daisy.daisy_base.event.OnChatMessageEvent;
-
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.PlayerChatMessage;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -51,10 +46,5 @@ public class PlayerListMixin {
 	@Inject(method = "remove", at = @At("RETURN"))
 	private void daisy$onRemove(ServerPlayer serverPlayer, CallbackInfo ci) {
 		PlayerLeaveEvent.getEVENT().invoker().disconnect(serverPlayer);
-	}
-
-	@Inject(method = "broadcastChatMessage(Lnet/minecraft/network/chat/PlayerChatMessage;Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/network/chat/ChatType$Bound;)V", at = @At("HEAD"), cancellable = true)
-	private void daisy$onBroadcastChatMessage(PlayerChatMessage message, ServerPlayer sender, ChatType.Bound params, CallbackInfo ci) {
-		OnChatMessageEvent.getEVENT().invoker().onChatMessage(message, sender, params);
 	}
 }
