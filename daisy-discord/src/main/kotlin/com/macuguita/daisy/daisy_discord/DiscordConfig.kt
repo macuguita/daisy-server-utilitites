@@ -24,16 +24,20 @@ package com.macuguita.daisy.daisy_discord
 
 import folk.sisby.kaleido.api.WrappedConfig
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment
+import folk.sisby.kaleido.lib.quiltconfig.api.annotations.IntegerRange
 
 class DiscordConfig : WrappedConfig() {
 	@Comment("Whether the module should be enabled.")
 	var isEnabled: Boolean = false
 	var botToken: String = "PLACE_TOKEN_HERE"
 	var channelId: String = "PLACE_CHANNEL_ID_HERE"
+	var avatarHeadsApi: String = "https://api.nucleoid.xyz/skin/face/%uuid%"
 	var playerJoinMessage: String = "%username% joined the server"
 	var playerLeaveMessage: String = "%username% left the server"
 	var serverStartedMessage: String = "Server started."
 	var serverStoppingMessage: String = "Server stopping..."
 	var discordMessageFormat: String = "<%username%> %messageContent%"
 	var colorUsernamesBasedOnRole: Boolean = true
+	@IntegerRange(min = 0x000000, max = 0xFFFFFF)
+	var defaultDiscordUsernameColor: Int = 0x99AAB5
 }

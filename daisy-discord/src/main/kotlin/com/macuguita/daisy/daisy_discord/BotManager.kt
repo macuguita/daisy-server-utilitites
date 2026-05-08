@@ -137,7 +137,7 @@ object BotManager {
 				?.filter { it.color.rgb != 0 }
 				?.maxByOrNull { it.rawPosition }
 				?.color?.rgb
-				?: 0x99AAB5
+				?: DaisyDiscord.CONFIG.defaultDiscordUsernameColor
 
 			DaisyDiscord.mcServer.playerList.broadcastSystemMessage(
 				buildDiscordMessage(
@@ -156,7 +156,7 @@ object BotManager {
 		scope.launch {
 			webhook.execute(webhookToken) {
 				username = player.name.string
-				avatarUrl = "https://mc-heads.net/avatar/${player.stringUUID}/128"
+				avatarUrl = DaisyDiscord.CONFIG.avatarHeadsApi.replace("%uuid%", player.stringUUID)
 				content = escapeChars(message)
 				allowedMentions = AllowedMentionsBuilder()
 			}
