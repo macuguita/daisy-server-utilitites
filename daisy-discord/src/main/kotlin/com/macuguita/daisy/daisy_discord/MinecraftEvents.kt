@@ -22,6 +22,7 @@
 
 package com.macuguita.daisy.daisy_discord
 
+import com.macuguita.daisy.daisy_discord.bot.BotManager
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents

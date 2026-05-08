@@ -1,5 +1,6 @@
 package com.macuguita.daisy.daisy_discord
 
+import com.macuguita.daisy.daisy_discord.bot.BotManager
 import folk.sisby.kaleido.api.WrappedConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

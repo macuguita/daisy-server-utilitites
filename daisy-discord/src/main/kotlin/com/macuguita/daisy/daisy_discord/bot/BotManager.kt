@@ -20,7 +20,7 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.macuguita.daisy.daisy_discord
+package com.macuguita.daisy.daisy_discord.bot
 
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
@@ -40,8 +40,8 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
+import com.macuguita.daisy.daisy_discord.DaisyDiscord
 
 object BotManager {
 	private lateinit var kord: Kord
@@ -93,8 +93,7 @@ object BotManager {
 					return
 				}
 		} else {
-			val created = channel.createWebhook("Daisy MC Chat bridge") {
-			}
+			val created = channel.createWebhook("Daisy MC Chat bridge") {}
 			webhook = created
 			webhookToken = created.token
 				?: run {
@@ -104,50 +103,33 @@ object BotManager {
 		}
 	}
 
-	private fun buildDiscordMessage(format: String, username: String, content: String, color: Int?): Component {
-		val contentFormat = format.replace("%messageContent%", content)
-		val parts = contentFormat.split("%username%")
-
-		val root = Component.empty()
-		parts.forEachIndexed { index, part ->
-			if (part.isNotEmpty()) {
-				root.append(Component.literal(part))
-			}
-			if (index < parts.size - 1) {
-				val usernameComponent = Component.literal(username)
-				if (color != null) usernameComponent.withStyle { it.withColor(color) }
-				root.append(usernameComponent)
-			}
-		}
-		return root
-	}
-
 	private fun listenToDiscord() {
 		kord.on<MessageCreateEvent> {
 			if (message.author?.isBot == true) return@on
 			if (message.channelId != Snowflake(DaisyDiscord.CONFIG.channelId)) return@on
 
 			val author = message.author ?: return@on
-			val content = message.content
-
 			val member = message.getGuildOrNull()?.getMemberOrNull(author.id)
-			val username = member?.nickname ?: author.username
+
+			val displayName = member?.nickname ?: author.globalName ?: author.username
 			val color = member?.roles
 				?.toList()
 				?.filter { it.color.rgb != 0 }
 				?.maxByOrNull { it.rawPosition }
 				?.color?.rgb
-				?: 0x99AAB5
+				?: DaisyDiscord.CONFIG.defaultDiscordUsernameColor
 
-			DaisyDiscord.mcServer.playerList.broadcastSystemMessage(
-				buildDiscordMessage(
-					format = DaisyDiscord.CONFIG.discordMessageFormat,
-					username = username,
-					content = content,
-					color = if (DaisyDiscord.CONFIG.colorUsernamesBasedOnRole) color else null
-				),
-				false
+			val mcMessage = MessageFormatter.buildDiscordMessage(
+				format = DaisyDiscord.CONFIG.discordMessageFormat,
+				displayName = displayName,
+				username = author.username,
+				content = message.content,
+				color = if (DaisyDiscord.CONFIG.colorUsernamesBasedOnRole) color else null,
+				replyComponent = MessageFormatter.buildReplyComponent(message.referencedMessage),
+				attachmentComponent = MessageFormatter.buildAttachmentComponent(message.attachments)
 			)
+
+			DaisyDiscord.mcServer.playerList.broadcastSystemMessage(mcMessage, false)
 		}
 	}
 
@@ -156,8 +138,8 @@ object BotManager {
 		scope.launch {
 			webhook.execute(webhookToken) {
 				username = player.name.string
-				avatarUrl = "https://mc-heads.net/avatar/${player.stringUUID}/128"
-				content = escapeChars(message)
+				avatarUrl = DaisyDiscord.CONFIG.avatarHeadsApi.replace("%uuid%", player.stringUUID)
+				content = MessageFormatter.escapeMarkdown(message)
 				allowedMentions = AllowedMentionsBuilder()
 			}
 		}
@@ -168,16 +150,6 @@ object BotManager {
 		scope.launch {
 			kord.getChannelOf<TextChannel>(Snowflake(DaisyDiscord.CONFIG.channelId))
 				?.createMessage(message)
-		}
-	}
-
-	private fun escapeChars(text: String): String {
-		val charsToEscape = setOf('\\', '*', '_', '~', '`', '>', '|', '[', ']', '(', ')', '#')
-		return buildString {
-			for (c in text) {
-				if (c in charsToEscape) append('\\')
-				append(c)
-			}
 		}
 	}
 }

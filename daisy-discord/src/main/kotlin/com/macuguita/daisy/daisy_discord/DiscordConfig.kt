@@ -24,16 +24,33 @@ package com.macuguita.daisy.daisy_discord
 
 import folk.sisby.kaleido.api.WrappedConfig
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment
+import folk.sisby.kaleido.lib.quiltconfig.api.annotations.IntegerRange
 
 class DiscordConfig : WrappedConfig() {
 	@Comment("Whether the module should be enabled.")
 	var isEnabled: Boolean = false
 	var botToken: String = "PLACE_TOKEN_HERE"
 	var channelId: String = "PLACE_CHANNEL_ID_HERE"
+	var avatarHeadsApi: String = "https://api.nucleoid.xyz/skin/face/%uuid%"
 	var playerJoinMessage: String = "%username% joined the server"
 	var playerLeaveMessage: String = "%username% left the server"
 	var serverStartedMessage: String = "Server started."
 	var serverStoppingMessage: String = "Server stopping..."
 	var discordMessageFormat: String = "<%username%> %messageContent%"
+	@Comment("Format for reply indicators. Placeholders: %replyAuthor% (styled with replyAuthorColor), %replyContent% (styled with replyContentColor).")
+	var replyFormat: String = "↪ %replyAuthor% %replyContent%"
+	@Comment("Format for attachment links. Applied per attachment. Placeholders: %attachmentLabel% (Image/Video/File), %attachmentFilename%, %attachmentUrl%.")
+	var attachmentFormat: String = "[%attachmentLabel%: %attachmentFilename%]"
 	var colorUsernamesBasedOnRole: Boolean = true
+	@IntegerRange(min = 0x000000, max = 0xFFFFFF)
+	var defaultDiscordUsernameColor: Int = 0x99AAB5
+	@Comment("Color of the reply indicator line (the ↪ @author part).")
+	@IntegerRange(min = 0x000000, max = 0xFFFFFF)
+	var replyAuthorColor: Int = 0x888888
+	@Comment("Color of the reply content preview text.")
+	@IntegerRange(min = 0x000000, max = 0xFFFFFF)
+	var replyContentColor: Int = 0xAAAAAA
+	@Comment("Color of attachment links.")
+	@IntegerRange(min = 0x000000, max = 0xFFFFFF)
+	var attachmentLinkColor: Int = 0x55AAFF
 }
