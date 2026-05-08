@@ -24,42 +24,46 @@ package com.macuguita.daisy.daisy_discord
 
 import com.macuguita.daisy.daisy_discord.bot.BotManager
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
-import net.fabricmc.fabric.api.message.v1.ServerMessageEvents
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
+import com.macuguita.daisy.daisy_base.event.OnChatMessageEvent
+import com.macuguita.daisy.daisy_base.event.PlayerJoinEvent
+import com.macuguita.daisy.daisy_base.event.PlayerLeaveEvent
+import com.macuguita.daisy.daisy_base.event.ServerStartedEvent
+import com.macuguita.daisy.daisy_base.event.ServerStoppedEvent
+import com.macuguita.daisy.daisy_base.event.ServerStoppingEvent
 
-object MinecraftEvents {
+object DiscordEvents {
 	fun register() {
-		ServerPlayConnectionEvents.JOIN.register { handler, _, _ ->
+		PlayerJoinEvent.EVENT.register { _, player, _ ->
 			BotManager.sendSystemMessage(
 				DaisyDiscord.CONFIG.playerJoinMessage.replace(
 					"%username%",
-					handler.player.name.string
+					player.name.string
 				)
 			)
 		}
 
-		ServerPlayConnectionEvents.DISCONNECT.register { handler, _ ->
+		PlayerLeaveEvent.EVENT.register { player ->
 			BotManager.sendSystemMessage(
 				DaisyDiscord.CONFIG.playerLeaveMessage.replace(
 					"%username%",
-					handler.player.name.string
+					player.name.string
 				)
 			)
 		}
 
-		ServerMessageEvents.CHAT_MESSAGE.register { chat, sender, _ ->
+		OnChatMessageEvent.EVENT.register { chat, sender, _ ->
 			BotManager.sendPlayerMessage(sender, chat.signedContent().trim())
 		}
 
-		ServerLifecycleEvents.SERVER_STARTED.register {
+		ServerStartedEvent.EVENT.register {
 			BotManager.sendSystemMessage(DaisyDiscord.CONFIG.serverStartedMessage)
 		}
 
-		ServerLifecycleEvents.SERVER_STOPPING.register {
+		ServerStoppingEvent.EVENT.register {
 			BotManager.sendSystemMessage(DaisyDiscord.CONFIG.serverStoppingMessage)
 		}
 
-		ServerLifecycleEvents.SERVER_STOPPED.register {
+		ServerStoppedEvent.EVENT.register {
 			BotManager.stop()
 		}
 	}

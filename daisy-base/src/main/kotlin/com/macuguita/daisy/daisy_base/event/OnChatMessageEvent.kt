@@ -20,21 +20,35 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-plugins {
-	id("macuguita-root")
-	id("macuguita-root-mod")
-}
+package com.macuguita.daisy.daisy_base.event
 
-base {
-	archivesName = providers.gradleProperty("archives_base_name")
-}
+import dev.yumi.commons.event.Event
+import dev.yumi.mc.core.api.YumiEvents
+import net.minecraft.network.Connection
+import net.minecraft.network.chat.ChatType
+import net.minecraft.network.chat.PlayerChatMessage
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.server.network.CommonListenerCookie
 
-repositories {
-	flatDir { dirs("libs") }
-}
+fun interface OnChatMessageEvent {
+	fun onChatMessage(
+		message: PlayerChatMessage,
+		sender: ServerPlayer,
+		params: ChatType.Bound
+	)
 
-dependencies {
-	include("xyz.nucleoid:server-translations-api:${providers.gradleProperty("server_translations_api_version").get()}")
-	include("folk.sisby:kaleido-config:${providers.gradleProperty("kaleido_config_version").get()}")
-	include("dev.yumi.mc.core:yumi-mc-foundation:${providers.gradleProperty("yumi_version").get()}")
+	companion object {
+		@JvmStatic
+		val EVENT: Event<ResourceLocation, OnChatMessageEvent> =
+			YumiEvents.EVENTS.create(
+				OnChatMessageEvent::class.java
+			) { listeners ->
+				OnChatMessageEvent { message, sender, params ->
+					for (listener in listeners) {
+						listener.onChatMessage(message, sender, params)
+					}
+				}
+			}
+	}
 }

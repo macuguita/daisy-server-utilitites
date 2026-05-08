@@ -20,21 +20,29 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-plugins {
-	id("macuguita-root")
-	id("macuguita-root-mod")
-}
+package com.macuguita.daisy.daisy_base.event
 
-base {
-	archivesName = providers.gradleProperty("archives_base_name")
-}
+import dev.yumi.commons.event.Event
+import dev.yumi.mc.core.api.YumiEvents
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.level.ServerPlayer
 
-repositories {
-	flatDir { dirs("libs") }
-}
+fun interface PlayerLeaveEvent {
+	fun disconnect(
+		player: ServerPlayer,
+	)
 
-dependencies {
-	include("xyz.nucleoid:server-translations-api:${providers.gradleProperty("server_translations_api_version").get()}")
-	include("folk.sisby:kaleido-config:${providers.gradleProperty("kaleido_config_version").get()}")
-	include("dev.yumi.mc.core:yumi-mc-foundation:${providers.gradleProperty("yumi_version").get()}")
+	companion object {
+		@JvmStatic
+		val EVENT: Event<ResourceLocation, PlayerLeaveEvent> =
+			YumiEvents.EVENTS.create(
+				PlayerLeaveEvent::class.java
+			) { listeners ->
+				{ player ->
+					for (listener in listeners) {
+						listener.disconnect(player)
+					}
+				}
+			}
+	}
 }

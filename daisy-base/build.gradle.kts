@@ -30,4 +30,5 @@ loom {
 
 dependencies {
 	modApi("folk.sisby:kaleido-config:${providers.gradleProperty("kaleido_config_version").get()}")
+	modApi("dev.yumi.mc.core:yumi-mc-foundation:${providers.gradleProperty("yumi_version").get()}")
 }

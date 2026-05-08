@@ -15,7 +15,7 @@
   "icon": "assets/daisy-discord/icon.png",
   "environment": "*",
   "entrypoints": {
-    "server": [
+    "yumi:dedicated_server_init": [
       {
         "value": "com.macuguita.daisy.daisy_discord.DaisyDiscord",
         "adapter": "kotlin"

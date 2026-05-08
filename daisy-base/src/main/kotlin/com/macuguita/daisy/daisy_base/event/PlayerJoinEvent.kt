@@ -20,21 +20,33 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-plugins {
-	id("macuguita-root")
-	id("macuguita-root-mod")
-}
+package com.macuguita.daisy.daisy_base.event
 
-base {
-	archivesName = providers.gradleProperty("archives_base_name")
-}
+import dev.yumi.commons.event.Event
+import dev.yumi.mc.core.api.YumiEvents
+import net.minecraft.network.Connection
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.server.network.CommonListenerCookie
 
-repositories {
-	flatDir { dirs("libs") }
-}
+fun interface PlayerJoinEvent {
+	fun connect(
+		connection: Connection,
+		player: ServerPlayer,
+		cookie: CommonListenerCookie
+	)
 
-dependencies {
-	include("xyz.nucleoid:server-translations-api:${providers.gradleProperty("server_translations_api_version").get()}")
-	include("folk.sisby:kaleido-config:${providers.gradleProperty("kaleido_config_version").get()}")
-	include("dev.yumi.mc.core:yumi-mc-foundation:${providers.gradleProperty("yumi_version").get()}")
+	companion object {
+		@JvmStatic
+		val EVENT: Event<ResourceLocation, PlayerJoinEvent> =
+			YumiEvents.EVENTS.create(
+				PlayerJoinEvent::class.java
+			) { listeners ->
+				PlayerJoinEvent { connection, player, cookie ->
+					for (listener in listeners) {
+						listener.connect(connection, player, cookie)
+					}
+				}
+			}
+	}
 }
