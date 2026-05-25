@@ -169,6 +169,11 @@ object BotManager {
 			when (interaction.command.rootName) {
 				playerListCommand -> {
 					val mc = DaisyDiscord.mcServer
+					@Suppress("SENSELESS_COMPARISON")
+					if (mc == null) {
+						DaisyDiscord.LOGGER.info("Tried to call $playerListCommand while the minecraft server is uninitialized")
+						return@on
+					}
 					val players = if (mc.playerList.playerCount == 0) {
 						"Nobody is online"
 					} else {
