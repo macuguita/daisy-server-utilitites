@@ -27,9 +27,11 @@ import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.behavior.channel.createWebhook
 import dev.kord.core.behavior.execute
+import dev.kord.core.behavior.interaction.respondEphemeral
 import dev.kord.core.entity.Webhook
 import dev.kord.core.entity.channel.TextChannel
 import dev.kord.core.event.gateway.ReadyEvent
+import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
 import dev.kord.gateway.Intent
@@ -77,6 +79,7 @@ object BotManager {
 
 				setupChannel()
 				setupWebhook()
+				registerSlashCommands()
 				listenToDiscord()
 
 				kord.on<ReadyEvent> {
@@ -153,6 +156,33 @@ object BotManager {
 		webhook = created
 		webhookToken = created.token
 			?: error("Webhook token is null after creation")
+	}
+
+	private suspend fun registerSlashCommands() {
+		val mc = DaisyDiscord.mcServer
+		val playerListCommand = "playerlist"
+		kord.createGlobalChatInputCommand(
+			playerListCommand,
+			"Returns the player list of the Minecraft server"
+		) {
+		}
+		kord.on<ChatInputCommandInteractionCreateEvent> {
+			when (interaction.command.rootName) {
+				playerListCommand -> {
+					val players = if (mc.playerList.playerCount == 0) {
+						"Nobody is online"
+					} else {
+						mc.playerList.players.joinToString("\n") { it.name.string }
+					}
+					interaction.respondEphemeral {
+						content = """
+							Players online (${mc.playerList.playerCount}/${mc.playerList.maxPlayers}):
+							$players
+						""".trimIndent()
+					}
+				}
+			}
+		}
 	}
 
 	private fun listenToDiscord() {
