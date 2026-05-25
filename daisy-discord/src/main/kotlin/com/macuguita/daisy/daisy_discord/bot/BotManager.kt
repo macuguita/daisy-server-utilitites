@@ -159,7 +159,6 @@ object BotManager {
 	}
 
 	private suspend fun registerSlashCommands() {
-		val mc = DaisyDiscord.mcServer
 		val playerListCommand = "playerlist"
 		kord.createGlobalChatInputCommand(
 			playerListCommand,
@@ -169,6 +168,7 @@ object BotManager {
 		kord.on<ChatInputCommandInteractionCreateEvent> {
 			when (interaction.command.rootName) {
 				playerListCommand -> {
+					val mc = DaisyDiscord.mcServer
 					val players = if (mc.playerList.playerCount == 0) {
 						"Nobody is online"
 					} else {
